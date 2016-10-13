@@ -12,7 +12,7 @@ To store and control all the fabulous versions of our game so we don't screw up:
 
 * Summary of set up
 
-Copy this repo to your local machine
+Clone this repo to your local machine
 
 ### Contribution guidelines ###
 
