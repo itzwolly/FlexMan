@@ -5,11 +5,13 @@ This README would normally document whatever steps are necessary to get your gam
 ### What is this repository for? ###
 
 * Quick summary
+
 To store and control all the fabulous versions of our game so we don't screw up:)
 
 ### How do I get set up? ###
 
 * Summary of set up
+
 Copy this repo to your local machine
 
 ### Contribution guidelines ###
