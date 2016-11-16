@@ -89,7 +89,7 @@ public class Player : AnimationSprite {
 
     public void DoAttackAnimation() {
         _increment++;
-        if (_increment == 6) {
+        if (_increment == 12) {
             _increment = 0;
             NextFrame();
         }
