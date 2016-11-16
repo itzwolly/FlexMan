@@ -4,13 +4,23 @@ using GXPEngine;
 
 public class Player : AnimationSprite {
     private int _health = 0;
-    private Canvas _canvas;
+    private Canvas _canvasRight, _canvasLeft;
     private bool _alive;
     private int _increment;
     private bool _shouldDealDamage = true;
     private bool _startAttackAnimation;
     private bool _canAttack = true;
     private int _velocity = 25;
+    private int _direction = 0;
+
+    public int Direction {
+        get {
+            return _direction;
+        }
+        set {
+            _direction = value;
+        }
+    }
 
     public bool StartAttackAnimation {
         get {
@@ -53,17 +63,24 @@ public class Player : AnimationSprite {
         Mirror(true, false);
         x = ((game.width / 2) - width * 2);
         y = game.height - height;
-        DrawHitbox();
+        DrawHitboxLeft();
+        DrawHitboxRight();
+        getHitboxLeft().visible = false;
     }
 
     void Update() {
         if (Input.GetKey(Key.RIGHT)) {
             if (!StartAttackAnimation) {
+                getHitboxLeft().visible = false;
+                getHitboxRight().visible = true;
+                Mirror(true, false);
                 x += 4f;
             }
-        }
-        if (Input.GetKey(Key.LEFT)) {
+        } else if (Input.GetKey(Key.LEFT)) {
             if (!StartAttackAnimation) {
+                getHitboxLeft().visible = true;
+                getHitboxRight().visible = false;
+                Mirror(false, false);
                 x -= 4f;
             }
         }
@@ -72,8 +89,7 @@ public class Player : AnimationSprite {
             if (!StartAttackAnimation) {
                 y -= 4f;
             }
-        }
-        if (Input.GetKey(Key.DOWN)) {
+        } else if (Input.GetKey(Key.DOWN)) {
             if (!StartAttackAnimation) {
                 y += 4f;
             }
@@ -109,19 +125,34 @@ public class Player : AnimationSprite {
         return _health;
     }
 
-    private void DrawHitbox() {
-        _canvas = new Canvas(width, height);
-        _canvas.x -= (width / 2) - width - 25 ;
-        _canvas.width += (_canvas.width - 75);
-        _canvas.y -= (height / 2) - 25;
-        _canvas.height *= 8;
-        _canvas.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 40);
-        _canvas.alpha = 0.33f;
-        AddChild(_canvas);
+    private void DrawHitboxRight() {
+        _canvasRight = new Canvas(105, 40);
+        _canvasRight.x -= (width / 2) - width - 25 ;
+        _canvasRight.width += (_canvasRight.width - 75);
+        _canvasRight.y -= (height / 2) - 25;
+        _canvasRight.height *= 8;
+        _canvasRight.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 40);
+        _canvasRight.alpha = 0.33f;
+        AddChild(_canvasRight);
     }
 
-    public Canvas getHitBox() {
-        return _canvas;
+    private void DrawHitboxLeft() {
+        _canvasLeft = new Canvas(105, 40);
+        _canvasLeft.x -= (width / 2) - width - 75;
+        _canvasLeft.width -= (_canvasLeft.width + 150);
+        _canvasLeft.y -= (height / 2) - 25;
+        _canvasLeft.height *= 8;
+        _canvasLeft.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 40);
+        _canvasLeft.alpha = 0.33f;
+        AddChild(_canvasLeft);
+    }
+
+    public Canvas getHitboxRight() {
+        return _canvasRight;
+    }
+
+    public Canvas getHitboxLeft() {
+        return _canvasLeft;
     }
 }
 

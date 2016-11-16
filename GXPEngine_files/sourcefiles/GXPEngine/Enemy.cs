@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Timers;
 
 public class Enemy : AnimationSprite {
-    private Canvas _canvas;
+    private Canvas _canvasLeft, _canvasRight;
     private int _increment;
     //private Canvas _healthCanvas;
     //private Font _font;
@@ -15,7 +15,16 @@ public class Enemy : AnimationSprite {
     private bool _startAttackAnimation;
     private bool _canAttack = true;
     private int _velocity = 10;
+    private int _direction = 0; // 0 = left, 1 = right
 
+    public int Direction {
+        get {
+            return _direction;
+        }
+        set {
+            _direction = value;
+        }
+    }
     public bool ShouldDealDamage {
         get {
             return _shouldDealDamage;
@@ -63,7 +72,8 @@ public class Enemy : AnimationSprite {
         currentFrame = 0;
         x = (game.width / 2);
         y = game.height - height;
-        DrawHitbox();
+        DrawHitboxLeft();
+        DrawHitboxRight();
 
         //_healthCanvas = new Canvas(game.width, 150);
         //_healthCanvas.y -= 100;
@@ -106,18 +116,32 @@ public class Enemy : AnimationSprite {
         return _health;
     }
 
-    private void DrawHitbox() {
-        _canvas = new Canvas(width, height);
-        _canvas.width = 50;
-        _canvas.x -= ((width / 2) + _canvas.width);
-        _canvas.height += 75;
-        _canvas.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 80);
-        _canvas.alpha = 0.33f;
-        AddChild(_canvas);
+    private void DrawHitboxLeft() {
+        _canvasLeft = new Canvas(width, 40);
+        _canvasLeft.width = 50;
+        _canvasLeft.x -= ((width / 2) + _canvasLeft.width);
+        _canvasLeft.height += 75;
+        _canvasLeft.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 80);
+        _canvasLeft.alpha = 0.33f;
+        AddChild(_canvasLeft);
     }
 
-    public Canvas getHitBox() {
-        return _canvas;
+    private void DrawHitboxRight() {
+        _canvasRight = new Canvas(width, 40);
+        _canvasRight.width = 50;
+        _canvasRight.x += ((width * 2) + _canvasRight.width);
+        _canvasRight.height += 75;
+        _canvasRight.graphics.FillRectangle(System.Drawing.Brushes.Red, 0, 0, width, 80);
+        _canvasRight.alpha = 0.33f;
+        AddChild(_canvasRight);
+    }
+
+    public Canvas getHitBoxLeft() {
+        return _canvasLeft;
+    }
+
+    public Canvas getHitBoxRight() {
+        return _canvasRight;
     }
 }
 
