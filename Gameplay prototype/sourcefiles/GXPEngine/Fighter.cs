@@ -7,9 +7,10 @@ using System.Drawing;
 
 public class Fighter : AnimationSprite
 {
-    const int HIT_DURATION = 1;
+    const int HIT_DURATION = 25;
     Sprite hand;
     int hitTimer = 0;
+    int hitTiming = HIT_DURATION;
     bool isHitting = false;
     public int score;
     public int hit = 0;
@@ -77,9 +78,9 @@ public class Fighter : AnimationSprite
             //Console.WriteLine(y);
             if (item == this) continue;
             if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y) {
-                Fighter fighter = item as Player;
-                item.x -= scaleX * 25;             // Player gets knockbacked
+                isHitting = true;
                 (item as Fighter).hit++;
+                item.x -= scaleX * 25;             // Player gets knockbacked
                 score++;
             }
         }

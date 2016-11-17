@@ -33,36 +33,36 @@ public class MyGame : Game //MyGame is a Game
     //update game here
     void Update() {
         SetBoundaries();
-        foreach (GameObject other in player1.GetHitBox().GetCollisions())
-        {
-            ResolveCollision(other);
-        }
+        //foreach (GameObject other in player1.GetHitBox().GetCollisions())
+        //{
+        //    ResolveCollision(other);
+        //}
     }
 
 
-    private void ResolveCollision(GameObject other)
-    {
-        foreach(Enemy enemy in _em.GetAllEnemies())
-        {
-            if (other is Player)
-            {
-                if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
-                {
-                    if (player1.GetHitBox().y + (player1.GetHitBox().height / 2) > enemy.GetHitBox().y - (enemy.GetHitBox().height / 2))
-                    {
-                        player1.y = (player1.y - 10);
-                    }
-                }
-                if (player1.GetHitBox().y - (player1.GetHitBox().height / 2) < enemy.GetHitBox().y + (enemy.GetHitBox().height / 2))
-                {
-                    if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
-                    {
-                        player1.y = (player1.y + 20);
-                    }
-                }
-            }
-        }
-    }
+    //private void ResolveCollision(GameObject other)
+    //{
+    //    foreach(Enemy enemy in _em.GetAllEnemies())
+    //    {
+    //        if (other is Player)
+    //        {
+    //            if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+    //            {
+    //                if (player1.GetHitBox().y + (player1.GetHitBox().height / 2) > enemy.GetHitBox().y - (enemy.GetHitBox().height / 2))
+    //                {
+    //                    player1.y = (player1.y - 10);
+    //                }
+    //            }
+    //            if (player1.GetHitBox().y - (player1.GetHitBox().height / 2) < enemy.GetHitBox().y + (enemy.GetHitBox().height / 2))
+    //            {
+    //                if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+    //                {
+    //                    player1.y = (player1.y + 20);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     //system starts here
     static void Main() 
@@ -80,6 +80,10 @@ public class MyGame : Game //MyGame is a Game
         if (player1.y < background.height + 43)
         {
             player1.y = background.height + 39;
+        }
+
+        if (player1.x - (player1.width / 2) < 0) {
+            player1.x = player1.width - (player1.width / 2);
         }
     }
 }

@@ -45,6 +45,7 @@ public class Enemy : Fighter
         {
             SetState(State.FIGHTING);
             Hit();
+            Console.WriteLine(hit);
         }
         if (hit > 3)
         {
