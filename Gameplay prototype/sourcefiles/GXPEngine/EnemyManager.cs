@@ -16,11 +16,11 @@ public class EnemyManager : GameObject
 
     public void createEnemies() {
         for (int i = 0; i < 5; i++) {
-            enemy = new Enemy(i % 2, "assets\\green.png", 5, 1, _player);
-            enemy.alpha = 0.5f;
-            game.AddChild(enemy);
+            enemy = new Enemy(i % 2, "red.png", 8, 1, _player);
+            //enemy.alpha = 0.5f;
+            game.AddChildAt(enemy, 1);
             _listOfEnemies.Add(enemy);
-            enemy.SetXY(Utils.Random(0, 800), Utils.Random(0, 200));
+            enemy.SetXY(Utils.Random(_player.width, 1024), Utils.Random(400, game.height - 120));
         }
         getTwoRandomEnemies();
     }
@@ -29,8 +29,6 @@ public class EnemyManager : GameObject
         try {
             _listOfEnemies[0].SetState(Fighter.State.WALKING);  // index 0 will always go left
             _listOfEnemies[1].SetState(Fighter.State.WALKING);  // index 1 will always go right
-
-            //TODO: // Make it randomly selected, although not the same enemy should be selected twice
         }
         catch {
             // empty, dont kill us pls
@@ -55,6 +53,11 @@ public class EnemyManager : GameObject
         if (enemy.GetState() == Fighter.State.FIGHTING) {
             enemy.SetState(Fighter.State.WAITING);
         }
-        Console.WriteLine(enemy.GetState());
+        
+    }
+
+    public List<Enemy> GetAllEnemies()
+    {
+        return _listOfEnemies;
     }
 }
