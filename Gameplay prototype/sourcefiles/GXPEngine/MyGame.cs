@@ -5,15 +5,20 @@ using System.Timers;
 
 public class MyGame : Game //MyGame is a Game
 {
-    Player player1, player2;
+    Player player1/*, player2*/;
     EnemyManager _em;
+    Background background;
 
     //initialize game here
     public MyGame () : base(1024, 768, false, false)
     {
-        player1 = new Player("assets\\green.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, 5, 1);
-        AddChild(player1);
-        player1.SetXY(800, 600);
+        player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, 8, 1);
+        AddChildAt(player1, 1);
+        player1.SetXY(100, 600);
+
+        background = new Background();
+        AddChildAt(background, 0);
+
         //Sound bgmusic = new Sound("level.mp3", true, true);
         //bgmusic.Play();
 
@@ -27,12 +32,54 @@ public class MyGame : Game //MyGame is a Game
     
     //update game here
     void Update() {
+        SetBoundaries();
+        foreach (GameObject other in player1.GetHitBox().GetCollisions())
+        {
+            ResolveCollision(other);
+        }
+    }
 
+
+    private void ResolveCollision(GameObject other)
+    {
+        foreach(Enemy enemy in _em.GetAllEnemies())
+        {
+            if (other is Player)
+            {
+                if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+                {
+                    if (player1.GetHitBox().y + (player1.GetHitBox().height / 2) > enemy.GetHitBox().y - (enemy.GetHitBox().height / 2))
+                    {
+                        player1.y = (player1.y - 10);
+                    }
+                }
+                if (player1.GetHitBox().y - (player1.GetHitBox().height / 2) < enemy.GetHitBox().y + (enemy.GetHitBox().height / 2))
+                {
+                    if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+                    {
+                        player1.y = (player1.y + 20);
+                    }
+                }
+            }
+        }
     }
 
     //system starts here
     static void Main() 
     {
         new MyGame().Start();
+    }
+
+    public void SetBoundaries()
+    {
+        if (player1.y > height - 127)
+        {
+            player1.y = height - 127;
+        }
+
+        if (player1.y < background.height + 43)
+        {
+            player1.y = background.height + 39;
+        }
     }
 }

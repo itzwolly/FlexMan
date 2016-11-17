@@ -16,17 +16,17 @@ public class EnemyManager : GameObject
 
     public void createEnemies() {
         for (int i = 0; i < 5; i++) {
-            enemy = new Enemy("assets\\green.png", 5, 1, _player);
-            enemy.alpha = 0.5f;
+            enemy = new Enemy("red.png", 8, 1, _player);
+            //enemy.alpha = 0.5f;
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);
             try {
                 _listOfEnemies[0].Type = 1; // type 1 is right
                 _listOfEnemies[1].Type = 2; // type 2 is left
             } catch {
-
+                // empty, dont kill us pls
             }
-            enemy.SetXY(Utils.Random(0, 800), Utils.Random(0, 200));
+            enemy.SetXY(Utils.Random(105, 1024 - enemy.width), Utils.Random(400, 600));
         }
         getTwoRandomEnemies();
     }
@@ -59,5 +59,10 @@ public class EnemyManager : GameObject
         if (enemy.GetState() == Fighter.State.FIGHTING) {
             enemy.SetState(Fighter.State.WAITING);
         }
+    }
+
+    public List<Enemy> GetAllEnemies()
+    {
+        return _listOfEnemies;
     }
 }

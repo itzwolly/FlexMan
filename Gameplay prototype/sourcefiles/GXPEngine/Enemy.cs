@@ -5,7 +5,8 @@ using System.Text;
 using GXPEngine;
 
 
-public class Enemy : Fighter {
+public class Enemy : Fighter
+{
     int time = 0;
     Sprite target;
     int type = 0;
@@ -23,40 +24,30 @@ public class Enemy : Fighter {
         base.Update();
 
         ChooseFightingSide();
-
-        if (x > targetPos + 2 && GetState() == State.WALKING)
-        {             // Player is on the left side
-            Walk(-2, 0);
-
-        }
-        if (x < targetPos - 2 && GetState() == State.WALKING)
-        {           // Player is on the right side
-            Walk(2, 0);
-        }
-        else
-        {
-            if (y > target.y && GetState() == State.WALKING)
-            {              // Player is above the enemy
-                Walk(0, -4);
+        if (GetState() == State.WALKING) {
+            if (x > targetPos + 2) {             // Player is on the left side
+                Walk(-2, 0);
             }
-            if (y < target.y && GetState() == State.WALKING)
-            {              // Player is below the enemy
-                Walk(0, 4);
+            if (x < targetPos - 2) {           // Player is on the right side
+                Walk(2, 0);
+            } else {
+                if (y > target.y) {              // Player is above the enemy
+                    Walk(0, -2);
+                }
+                if (y < target.y) {              // Player is below the enemy
+                    Walk(0, 2);
+                }
             }
         }
+        
 
-        time++;
-        if (target.DistanceTo(this) < target.width / 2)
+        if (target.DistanceTo(this) < target.width / 2 && GetState() == State.WALKING)
         {
-            time = 0;
             SetState(State.FIGHTING);
             Hit();
         }
-
-
         if (hit > 3)
         {
-            //_isDead = true;
             Destroy();
         }
     }
@@ -64,10 +55,10 @@ public class Enemy : Fighter {
     private void ChooseFightingSide()
     {
         if (Type == 1) { // right
-            targetPos = target.x + 75;                // Makes the enemy go either left or right
+            targetPos = target.x + 135;                // Makes the enemy go either left or right
         }
         if (Type == 2) { // left
-            targetPos = target.x - 65;
+            targetPos = target.x - 125;
         }
         // parse in index number of the list of enemies
         // if index is 0, then go left
