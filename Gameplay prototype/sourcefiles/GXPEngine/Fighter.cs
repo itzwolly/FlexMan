@@ -79,7 +79,7 @@ public class Fighter : AnimationSprite
         }
     }
 
-    protected void Walk(float moveX, float moveY) {
+    public void Walk(float moveX, float moveY) {
         if (isHitting == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;

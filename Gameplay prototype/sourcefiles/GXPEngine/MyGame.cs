@@ -27,7 +27,8 @@ public class MyGame : Game //MyGame is a Game
     
     //update game here
     void Update() {
-            }
+
+    }
 
     //system starts here
     static void Main() 
