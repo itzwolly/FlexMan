@@ -16,6 +16,7 @@ public class Player : Fighter
             this.downKey = downKey;
             this.upKey = upKey;
             this.hitKey = hitKey;
+        //scale = 0.5f;
     }
 
     void Update()

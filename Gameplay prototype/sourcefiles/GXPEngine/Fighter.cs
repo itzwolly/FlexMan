@@ -72,7 +72,7 @@ public class Fighter : AnimationSprite
             //Console.WriteLine(y);
             if (item == this) continue;
             if (item is Fighter && item.y + 10 >= y && item.y - 10 <= y) {
-                item.x -= scaleX * 100;
+                item.x -= scaleX * 100;             // Player gets knockbacked
                 (item as Fighter).hit++;
                 score++;
             }
@@ -83,7 +83,7 @@ public class Fighter : AnimationSprite
         if (isHitting == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;
-            if (moveX > 0) scaleX = -1.0f;
+            if (moveX > 0) scaleX = -1.0f;          // Mirror the sprite the correct way
             if (moveX < 0) scaleX = 1.0f;
         }
     }
@@ -97,8 +97,11 @@ public class Fighter : AnimationSprite
         SetState(State.FIGHTING);
         if (isHitting == false && GetState() == State.FIGHTING) {
             isHitting = true;
-            hitTimer = HIT_DURATION;
             hand.visible = true;
+            Sound hitSound = new Sound("hit_sound.wav", false, false);
+            hitSound.Play();
+            hitTimer = HIT_DURATION;
         }
+        SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
 }

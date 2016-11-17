@@ -14,6 +14,9 @@ public class MyGame : Game //MyGame is a Game
         player1 = new Player("assets\\green.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, 5, 1);
         AddChild(player1);
         player1.SetXY(800, 600);
+        //Sound bgmusic = new Sound("level.mp3", true, true);
+        //bgmusic.Play();
+
 
         //player2 = new Player("square.png", Key.A, Key.D, Key.W, Key.S, Key.TAB);
         //AddChild(player2);
@@ -24,8 +27,7 @@ public class MyGame : Game //MyGame is a Game
     
     //update game here
     void Update() {
-        
-    }
+            }
 
     //system starts here
     static void Main() 

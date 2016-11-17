@@ -27,9 +27,12 @@ public class EnemyManager : GameObject
 
     private void getTwoRandomEnemies() {
         try {
-            _listOfEnemies[0].SetState(Fighter.State.WALKING);
-            _listOfEnemies[1].SetState(Fighter.State.WALKING);
-        } catch {
+            _listOfEnemies[0].SetState(Fighter.State.WALKING);  // index 0 will always go left
+            _listOfEnemies[1].SetState(Fighter.State.WALKING);  // index 1 will always go right
+
+            //TODO: // Make it randomly selected, although not the same enemy should be selected twice
+        }
+        catch {
             // empty, dont kill us pls
         }
     }
