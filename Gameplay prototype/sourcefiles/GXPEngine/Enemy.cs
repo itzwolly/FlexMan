@@ -71,7 +71,7 @@ public class Enemy : Fighter
 
     private void ChooseFightingSide()
     {
-        targetPos = _target.x + (_type == 1 ? 100 : -100);                // Makes the enemy go either left or right
+        targetPos = _target.x + (_type == 1 ? 75 : -75);                // Makes the enemy go either left or right
     }
 
     private void MirrorToPlayer()

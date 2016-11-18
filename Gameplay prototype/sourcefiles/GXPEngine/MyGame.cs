@@ -3,6 +3,7 @@ using System.Drawing;
 using GXPEngine;
 using System.Timers;
 
+
 public class MyGame : Game //MyGame is a Game
 {
     Player player1, player2;
@@ -30,10 +31,12 @@ public class MyGame : Game //MyGame is a Game
         //player2.SetXY(224, 600);
         _em = new EnemyManager(player1);
         _em.createEnemies();
+
     }
-    
+        
     //update game here
     void Update() {
+        
         SetBoundaries();
         //PlayerCamera();
         foreach (GameObject other in player1.GetHitBox().GetCollisions())

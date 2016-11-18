@@ -20,9 +20,9 @@ public class EnemyManager : GameObject
             //enemy.alpha = 0.5f;
             game.AddChildAt(enemy, 1);
             _listOfEnemies.Add(enemy);
-            enemy.SetXY(Utils.Random(_player.width, 1024), Utils.Random(400, game.height - 120));
+            enemy.SetXY(Utils.Random(game.width / 3, 1024), Utils.Random(400, game.height - 120));
         }
-        //GetTwoRandomEnemies();
+        GetTwoRandomEnemies();
     }
 
     private void GetTwoRandomEnemies() {

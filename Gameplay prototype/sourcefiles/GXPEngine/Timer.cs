@@ -6,10 +6,14 @@ namespace GXPEngine
         private int _time;
         private Action _onTimeout;
 
+        
+
         public Timer(int timeOut, Action onTimeout) : base()
         {
             _onTimeout = onTimeout;
             _time = timeOut;
+
+            
         }
 
         private void Update()

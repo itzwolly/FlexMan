@@ -58,12 +58,12 @@ public class Fighter : AnimationSprite
         hittingAnimation();
         if (Input.GetKeyDown(Key.R))
         {
-            _collisionHitBox.visible = false;
+            _collisionHitBox.visible = true;
         }
 
         if (Input.GetKeyDown(Key.T))
         {
-            _collisionHitBox.visible = true;
+            _collisionHitBox.visible = false;
         }
     }
 
@@ -104,7 +104,7 @@ public class Fighter : AnimationSprite
             if (item == this) continue;
             if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) { 
                 Fighter fighter = item as Player;
-                item.x -= scaleX * 25;             // Player gets knockbacked
+                item.x -= scaleX * 40;             // Player gets knockbacked
                 (item as Fighter)._health--;
                 (item as Fighter).turnInvurnerable();
                 score++;
@@ -176,7 +176,7 @@ public class Fighter : AnimationSprite
         _collisionHitBox.y = -23; 
         _collisionHitBox.x -= -15;
 
-        
+        _collisionHitBox.visible = false;
 
         
         return _collisionHitBox;
