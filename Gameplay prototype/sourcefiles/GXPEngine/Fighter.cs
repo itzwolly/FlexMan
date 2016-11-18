@@ -10,12 +10,13 @@ public class Fighter : AnimationSprite
     const int HIT_DURATION = 25;
     Sprite hand;
     int hitTimer = 0;
+    int hitTiming = HIT_DURATION;
     bool isHitting = false;
     public int score;
     public int _health = 0;
     private State _state;
     private int timer;
-    public bool _invincible = false;
+    protected bool _invincible = false;
     Canvas _collisionHitBox;
 
     public enum State {
@@ -102,8 +103,8 @@ public class Fighter : AnimationSprite
             //Console.WriteLine(item.y);
             //Console.WriteLine(y);
             if (item == this) continue;
-            if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) { 
-                Fighter fighter = item as Player;
+            if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) {
+                isHitting = true;
                 item.x -= scaleX * 40;             // Player gets knockbacked
                 (item as Fighter)._health--;
                 (item as Fighter).turnInvurnerable();
@@ -114,7 +115,7 @@ public class Fighter : AnimationSprite
         }
     }
 
-    protected void Walk(float moveX, float moveY) {
+    public void Walk(float moveX, float moveY) {
         if (isHitting == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;

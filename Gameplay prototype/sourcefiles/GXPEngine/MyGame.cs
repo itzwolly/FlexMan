@@ -6,8 +6,9 @@ using System.Timers;
 
 public class MyGame : Game //MyGame is a Game
 {
-    Player player1, player2;
+    Player player1;
     EnemyManager _em;
+    Background background;
 
     //initialize game here
     public MyGame () : base(1024, 768, false, false)
@@ -16,9 +17,8 @@ public class MyGame : Game //MyGame is a Game
         AddChildAt(player1, 1);
         player1.SetXY(100, 600);
 
-       
 
-        Background background = new Background();
+        background = new Background();
         AddChildAt(background, 0);
 
         Sound bgmusic = new Sound("battle_theme.mp3", true, true);
@@ -39,44 +39,39 @@ public class MyGame : Game //MyGame is a Game
         
         SetBoundaries();
         //PlayerCamera();
-        foreach (GameObject other in player1.GetHitBox().GetCollisions())
-        {
-            //ResolveCollision(other);
-        }
+
+
+        //foreach (GameObject other in player1.GetHitBox().GetCollisions())
+        //{
+        //    ResolveCollision(other);
+        //}
+
     }
 
 
-    private void ResolveCollision(GameObject other)
-    {
-        foreach(Enemy enemy in _em.GetAllEnemies())
-        {
-            if (other is Player)
-            {
-                //if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
-                //{
-                //    enemy.GetHitBox().Destroy();
-                //}
-                
-                if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
-                {
-                    //enemy.GetHitBox().Destroy();
-                    if (player1.GetHitBox().y + (player1.GetHitBox().height / 2) > enemy.GetHitBox().y - (enemy.GetHitBox().height / 2))
-                    {
-                        player1.y = (player1.y - 10);
-                    }
-                }
-                if (player1.GetHitBox().y - (player1.GetHitBox().height / 2) < enemy.GetHitBox().y + (enemy.GetHitBox().height / 2))
-                {
-                    if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
-                    {
-                        player1.y = (player1.y + 20);
-                        //enemy.GetHitBox().Destroy();
-                    }
-                }
-            }
-        }
-        
-    }
+    //private void ResolveCollision(GameObject other)
+    //{
+    //    foreach(Enemy enemy in _em.GetAllEnemies())
+    //    {
+    //        if (other is Player)
+    //        {
+    //            if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+    //            {
+    //                if (player1.GetHitBox().y + (player1.GetHitBox().height / 2) > enemy.GetHitBox().y - (enemy.GetHitBox().height / 2))
+    //                {
+    //                    player1.y = (player1.y - 10);
+    //                }
+    //            }
+    //            if (player1.GetHitBox().y - (player1.GetHitBox().height / 2) < enemy.GetHitBox().y + (enemy.GetHitBox().height / 2))
+    //            {
+    //                if (player1.GetHitBox().HitTest(enemy.GetHitBox()))
+    //                {
+    //                    player1.y = (player1.y + 20);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     //system starts here
     static void Main() 
@@ -99,14 +94,18 @@ public class MyGame : Game //MyGame is a Game
 
     public void SetBoundaries()
     {
-        if (player1.y > height - 120)
+        if (player1.y > height - 127)
         {
-            player1.y = height - 120;
+            player1.y = height - 127;
         }
 
-        if (player1.y < 400)
+        if (player1.y < background.height + 43)
         {
-            player1.y = 400;
+            player1.y = background.height + 39;
+        }
+
+        if (player1.x - (player1.width / 2) < 0) {
+            player1.x = player1.width - (player1.width / 2);
         }
 
         if (player1.x > width - (player1.width / 4))

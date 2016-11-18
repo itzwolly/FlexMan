@@ -18,6 +18,7 @@ public class Player : Fighter
         this.upKey = upKey;
         this.hitKey = hitKey;
         _health = 15;
+        
        
         //scale = 0.5f;
        // Mirror(false, false);
@@ -33,7 +34,8 @@ public class Player : Fighter
             SetState(Fighter.State.WALKING);
             Walk(-5, 0);
         }
-        if (Input.GetKey(rightKey)) {
+        else if (Input.GetKey(rightKey)) {
+
             SetState(Fighter.State.WALKING);
             Walk(5, 0);
         }
@@ -44,12 +46,21 @@ public class Player : Fighter
             SetState(Fighter.State.WALKING);
             Walk(0, -5);
         }
-        if (Input.GetKey(downKey)) {
+        else if (Input.GetKey(downKey)) {
+
             SetState(Fighter.State.WALKING);
             Walk(0, 5);
         }
         if (Input.GetKeyDown(hitKey)) {
             Hit();
+        }
+    }
+
+    public bool GetInvincible
+    {
+        get
+        {
+            return _invincible;
         }
     }
 }
