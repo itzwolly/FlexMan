@@ -22,13 +22,15 @@ public class EnemyManager : GameObject
             _listOfEnemies.Add(enemy);
             enemy.SetXY(Utils.Random(_player.width, 1024), Utils.Random(400, game.height - 120));
         }
-        getTwoRandomEnemies();
+        //GetTwoRandomEnemies();
     }
 
-    private void getTwoRandomEnemies() {
+    private void GetTwoRandomEnemies() {
         try {
-            _listOfEnemies[0].SetState(Fighter.State.WALKING);  // index 0 will always go left
-            _listOfEnemies[1].SetState(Fighter.State.WALKING);  // index 1 will always go right
+            
+                _listOfEnemies[0].SetState(Fighter.State.WALKING);  // index 0 will always go left
+                _listOfEnemies[1].SetState(Fighter.State.WALKING);  // index 1 will always go right
+            
         }
         catch {
             // empty, dont kill us pls
@@ -36,14 +38,15 @@ public class EnemyManager : GameObject
     }
 
     void Update() {
+
         try {
             if (_listOfEnemies[0].IsDestroyed()) {
                 _listOfEnemies.RemoveAt(0);
-                getTwoRandomEnemies();
+                GetTwoRandomEnemies();
             }
             if (_listOfEnemies[1].IsDestroyed()) {
                 _listOfEnemies.RemoveAt(1);
-                getTwoRandomEnemies();
+                GetTwoRandomEnemies();
             }
         } catch {
             // empty, dont kill us pls

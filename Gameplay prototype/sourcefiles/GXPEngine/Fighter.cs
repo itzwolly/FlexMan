@@ -7,14 +7,15 @@ using System.Drawing;
 
 public class Fighter : AnimationSprite
 {
-    const int HIT_DURATION = 1;
+    const int HIT_DURATION = 25;
     Sprite hand;
     int hitTimer = 0;
     bool isHitting = false;
     public int score;
-    public int hit = 0;
+    public int _health = 0;
     private State _state;
     private int timer;
+    public bool _invincible = false;
     Canvas _collisionHitBox;
 
     public enum State {
@@ -23,8 +24,7 @@ public class Fighter : AnimationSprite
         WAITING
     }
 
-    public Fighter(string spriteName, int col, int row)
-        : base(spriteName, col, row) {
+    public Fighter(string spriteName, int col, int row) : base(spriteName, col, row) {
             Mirror(true, false);
             score = 0;
             SetOrigin(width / 2, height);
@@ -55,9 +55,20 @@ public class Fighter : AnimationSprite
 
     protected void Update() {
         UpdateHit();
+        hittingAnimation();
+        if (Input.GetKeyDown(Key.R))
+        {
+            _collisionHitBox.visible = false;
+        }
+
+        if (Input.GetKeyDown(Key.T))
+        {
+            _collisionHitBox.visible = true;
+        }
     }
 
     private void UpdateHit() {
+        
         if (hitTimer > 0) {
             CheckHitCollision();
             hitTimer--;
@@ -67,7 +78,22 @@ public class Fighter : AnimationSprite
         }
     }
 
-
+    private void hittingAnimation()
+    {
+        if (isHitting == true)
+        {
+            timer++;
+            if (timer > 10)
+            {
+                NextFrame();
+                timer = 0;
+            }
+            if (currentFrame == 8)
+            {
+                currentFrame = 0;
+            }
+        }
+    }
     private void CheckHitCollision() {
         foreach (GameObject item in hand.GetCollisions()) {
             //Console.WriteLine(item);
@@ -76,11 +102,14 @@ public class Fighter : AnimationSprite
             //Console.WriteLine(item.y);
             //Console.WriteLine(y);
             if (item == this) continue;
-            if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y) {
+            if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) { 
                 Fighter fighter = item as Player;
                 item.x -= scaleX * 25;             // Player gets knockbacked
-                (item as Fighter).hit++;
+                (item as Fighter)._health--;
+                (item as Fighter).turnInvurnerable();
                 score++;
+                Sound hitSound = new Sound("hit_sound.wav", false, false);
+                hitSound.Play();
             }
         }
     }
@@ -92,7 +121,7 @@ public class Fighter : AnimationSprite
             if (moveX > 0) scaleX = -1.0f;          // Mirror the sprite the correct way
             if (moveX < 0) scaleX = 1.0f;
             timer++;
-            if (timer > 15)
+            if (timer > 8)
             {
                 NextFrame();
                 timer = 0;
@@ -102,6 +131,18 @@ public class Fighter : AnimationSprite
                 currentFrame = 0;
             }
         }
+    }
+
+    private void turnInvurnerable()
+    {
+        _invincible = true;
+        alpha = 0.3f;
+        new Timer(1600, turnVurnerable); // Needs to be around 800 milliseconds, or else the player can pass the flame
+    }
+    private void turnVurnerable()
+    {
+        _invincible = false;
+        alpha = 1f;
     }
 
     private void EndHit() {
@@ -114,23 +155,13 @@ public class Fighter : AnimationSprite
         {
             SetState(State.FIGHTING);
         }
-        if (isHitting == false && GetState() == State.FIGHTING) {
+        if (isHitting == false && GetState() == State.FIGHTING /*IF THE OTHER GUY IS NOT INVINCIBLE*/) {
             isHitting = true;
             hand.visible = true;
-            Sound hitSound = new Sound("hit_sound.wav", false, false);
-            hitSound.Play();
             hitTimer = HIT_DURATION;
-            //currentFrame = 6;
-            //timer++;
-            //if (timer > 5)
-            //{
-            //    NextFrame();
-            //    timer = 0;
-            //}
-            //if (currentFrame == 8)
-            //{
-            //    currentFrame = 0;
-            //}
+            currentFrame = 6;
+            
+            
         }
         SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
@@ -143,7 +174,10 @@ public class Fighter : AnimationSprite
         _collisionHitBox.alpha = 0.33f;
         AddChild(_collisionHitBox);
         _collisionHitBox.y = -23; 
-        _collisionHitBox.x -= -5;
+        _collisionHitBox.x -= -15;
+
+        
+
         
         return _collisionHitBox;
     }
@@ -151,5 +185,10 @@ public class Fighter : AnimationSprite
     public Canvas GetHitBox()
     {
         return _collisionHitBox;
+    }
+
+    public int GetHealth()
+    {
+        return _health;
     }
 }

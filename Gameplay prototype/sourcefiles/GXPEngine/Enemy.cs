@@ -8,8 +8,8 @@ using GXPEngine;
 public class Enemy : Fighter
 {
     int time = 0;
-    Sprite target;
-    int type;
+    Fighter _target;
+    int _type;
     float targetPos;            // The position the enemy will take when fighting the player
     //bool _isDead;
 
@@ -18,54 +18,83 @@ public class Enemy : Fighter
     public Enemy(int type, string spriteName, int col, int row, Player target)
         : base(spriteName, col, row)
     {
-        this.target = target;
-        this.type = type;
+        _target = target;
+        _type = type;
+        _health = 3;
     }
 
     void Update()
     {
         base.Update();
 
+        MirrorToPlayer();
         ChooseFightingSide();
+        //WaitingStateBehaviour();
 
         if (x > targetPos + 2 && GetState() == State.WALKING)
         {             // Player is on the left side
-            //Walk(-2, 0);
+            Walk(-4, 0);
             //scaleX = 1.0f;
 
         }
         if (x < targetPos - 2 && GetState() == State.WALKING)
         {           // Player is on the right side
-            //Walk(2, 0);
+            Walk(4, 0);
             //scaleX = -1.0f;
         }
         else
         {
-            if (y > target.y && GetState() == State.WALKING)
+            if (y > _target.y && GetState() == State.WALKING)
             {              // Player is above the enemy
-                //Walk(0, -4);
+                Walk(0, -4);
             }
-            if (y < target.y && GetState() == State.WALKING)
+            if (y < _target.y && GetState() == State.WALKING)
             {              // Player is below the enemy
-                //Walk(0, 4);
+                Walk(0, 4);
             }
         }
         time++;
-        if (target.DistanceTo(this) < target.width / 2 && GetState() == State.WALKING)
+        if (_target.DistanceTo(this) < _target.width && GetState() == State.WALKING && _target._invincible == false/* IF PLAYER TARGET IS NOT INVINCIBLE*/ )
         {
             time = 0;
-            //SetState(State.FIGHTING);
-            //Hit();
+            SetState(State.FIGHTING);
+            Hit();
         }
-        if (hit > 5)
+        if (_health == 0)
         {
             //_isDead = true;
             Destroy();
+            Sound enemyDeath = new Sound("death.wav", false, false);
+            enemyDeath.Play();
         }
     }
 
     private void ChooseFightingSide()
     {
-        targetPos = target.x + (type == 1 ? 25 : -25);                // Makes the enemy go either left or right
+        targetPos = _target.x + (_type == 1 ? 100 : -100);                // Makes the enemy go either left or right
+    }
+
+    private void MirrorToPlayer()
+    {
+        if (x > _target.x && GetState() == State.WALKING)           //Enemy is on the right
+        {
+            scaleX = 1.0f;
+        }
+        if (x < _target.x && GetState() == State.WALKING)           //Enemy is on the left
+        {
+            scaleX = -1.0f;
+        }
+    }
+
+    private void WaitingStateBehaviour()                // This will handle how enemies in the WAITING state will walk randomly about, posing no threat
+    {
+        time++;
+        if (GetState() == State.WAITING && time > 500)
+        {
+            SetState(State.WALKING);
+            Walk(Utils.Random(-40, 40), Utils.Random(-40, -40));
+            time = 0;
+            SetState(State.WAITING);
+        }
     }
 }

@@ -17,6 +17,7 @@ public class Player : Fighter
         this.downKey = downKey;
         this.upKey = upKey;
         this.hitKey = hitKey;
+        _health = 15;
        
         //scale = 0.5f;
        // Mirror(false, false);
@@ -30,22 +31,22 @@ public class Player : Fighter
 
         if (Input.GetKey(leftKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(-10, 0);
+            Walk(-5, 0);
         }
         if (Input.GetKey(rightKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(10, 0);
+            Walk(5, 0);
         }
 
         oldX = x;
         oldY = y;
         if (Input.GetKey(upKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(0, -10);
+            Walk(0, -5);
         }
         if (Input.GetKey(downKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(0, 10);
+            Walk(0, 5);
         }
         if (Input.GetKeyDown(hitKey)) {
             Hit();

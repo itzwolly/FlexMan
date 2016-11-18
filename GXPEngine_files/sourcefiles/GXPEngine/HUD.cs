@@ -8,7 +8,7 @@ public class HUD : Canvas {
     Player _player;
     Enemy _enemy;
 
-    public HUD(Player pPlayer, Enemy pEnemy) : base(Game.main.width, 32) {
+    public HUD(Player pPlayer, Enemy pEnemy) : base(Game.main.width, 0) {
         _player = pPlayer;
         _enemy = pEnemy;
     }

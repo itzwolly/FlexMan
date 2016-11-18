@@ -15,11 +15,14 @@ public class MyGame : Game //MyGame is a Game
         AddChildAt(player1, 1);
         player1.SetXY(100, 600);
 
+       
+
         Background background = new Background();
         AddChildAt(background, 0);
 
-        //Sound bgmusic = new Sound("level.mp3", true, true);
-        //bgmusic.Play();
+        Sound bgmusic = new Sound("battle_theme.mp3", true, true);
+        bgmusic.Play();
+
 
 
         //player2 = new Player("square.png", Key.A, Key.D, Key.W, Key.S, Key.TAB);
@@ -32,9 +35,10 @@ public class MyGame : Game //MyGame is a Game
     //update game here
     void Update() {
         SetBoundaries();
+        //PlayerCamera();
         foreach (GameObject other in player1.GetHitBox().GetCollisions())
         {
-            ResolveCollision(other);
+            //ResolveCollision(other);
         }
     }
 
@@ -77,6 +81,19 @@ public class MyGame : Game //MyGame is a Game
         new MyGame().Start();
     }
 
+    public void PlayerCamera()
+    {
+        x = game.width / 2 - player1.x;
+        if (x > 0)
+        {
+            x = 0;
+        }
+        if (x < -(width / 2))
+        {
+            x = -(width / 2);
+        }
+    }
+
     public void SetBoundaries()
     {
         if (player1.y > height - 120)
@@ -87,6 +104,16 @@ public class MyGame : Game //MyGame is a Game
         if (player1.y < 400)
         {
             player1.y = 400;
+        }
+
+        if (player1.x > width - (player1.width / 4))
+        {
+            player1.x = width - (player1.width / 4);
+        }
+
+        if (player1.x < 0 + (player1.width / 4))
+        {
+            player1.x = 0 + (player1.width / 4);
         }
     }
 }
