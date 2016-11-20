@@ -61,6 +61,7 @@ public class Enemy : Fighter
         }
         if (_health == 0)
         {
+            target.score+=100;
             Destroy();
             Sound enemyDeath = new Sound("death.wav", false, false);
             enemyDeath.Play();
@@ -102,4 +103,6 @@ public class Enemy : Fighter
             SetState(State.WAITING);
         }
     }
+
+
 }

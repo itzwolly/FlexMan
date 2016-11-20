@@ -10,14 +10,18 @@ public class Fighter : AnimationSprite
     const int HIT_DURATION = 25;
     Sprite hand;
     int hitTimer = 0;
-    int hitTiming = HIT_DURATION;
     bool isHitting = false;
     public int score;
     public int _health = 0;
+    public int _maxHealth = 0;
     private State _state;
     private int timer;
     protected bool _invincible = false;
     Canvas _collisionHitBox;
+    string charName;
+    Sound hitSound;
+    bool _enemyHitByPlayer = false; // base for new functionality, doesnt work yet!
+    int enemyHitTimer = 0; // base for new functionality, doesnt work yet!
 
     public enum State {
         FIGHTING,
@@ -25,12 +29,16 @@ public class Fighter : AnimationSprite
         WAITING
     }
 
+    public string Name { get { return charName; } set { charName = value; } }
+    public bool IsEnemyHitByPlayer { get { return _enemyHitByPlayer; } set { _enemyHitByPlayer = value; } }
+
     public Fighter(string spriteName, int col, int row) : base(spriteName, col, row) {
-            Mirror(true, false);
-            score = 0;
-            SetOrigin(width / 2, height);
-            hand = CreateHand();
-            _collisionHitBox = CreateHitBox();
+        Mirror(true, false);
+        score = 0;
+        SetOrigin(width / 2, height);
+        hand = CreateHand();
+        hitSound = new Sound("hit_sound.wav", false, false);
+        _collisionHitBox = CreateHitBox();
     }
 
     public void SetState(State pState) {
@@ -57,6 +65,13 @@ public class Fighter : AnimationSprite
     protected void Update() {
         UpdateHit();
         hittingAnimation();
+
+        enemyHitTimer++; // base for new functionality, doesnt work yet!
+        if (enemyHitTimer == 6000) { // base for new functionality, doesnt work yet!
+            enemyHitTimer = 0;
+            IsEnemyHitByPlayer = false;
+        }
+
         if (Input.GetKeyDown(Key.R))
         {
             _collisionHitBox.visible = true;
@@ -69,7 +84,6 @@ public class Fighter : AnimationSprite
     }
 
     private void UpdateHit() {
-        
         if (hitTimer > 0) {
             CheckHitCollision();
             hitTimer--;
@@ -97,7 +111,7 @@ public class Fighter : AnimationSprite
     }
     private void CheckHitCollision() {
         foreach (GameObject item in hand.GetCollisions()) {
-            //Console.WriteLine(item);
+            //Console.WriteLine(item); // item is fighter getting hit, so if player hits enemy than item is enemy.
             //Console.WriteLine(item.GetType());
             //Console.WriteLine(this.GetType());
             //Console.WriteLine(item.y);
@@ -105,11 +119,12 @@ public class Fighter : AnimationSprite
             if (item == this) continue;
             if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) {
                 isHitting = true;
-                item.x -= scaleX * 40;             // Player gets knockbacked
+                item.x -= scaleX * 40; // Fighter gets knockbacked
+                if (item is Enemy) { // base for new functionality, doesnt work yet!
+                    (item as Enemy).IsEnemyHitByPlayer = true;
+                }
                 (item as Fighter)._health--;
                 (item as Fighter).turnInvurnerable();
-                score++;
-                Sound hitSound = new Sound("hit_sound.wav", false, false);
                 hitSound.Play();
             }
         }
@@ -161,8 +176,6 @@ public class Fighter : AnimationSprite
             hand.visible = true;
             hitTimer = HIT_DURATION;
             currentFrame = 6;
-            
-            
         }
         SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
@@ -188,8 +201,16 @@ public class Fighter : AnimationSprite
         return _collisionHitBox;
     }
 
+    public int GetScore() {
+        return score;
+    }
+
     public int GetHealth()
     {
         return _health;
+    }
+
+    public int GetMaxHealth() {
+        return _maxHealth;
     }
 }

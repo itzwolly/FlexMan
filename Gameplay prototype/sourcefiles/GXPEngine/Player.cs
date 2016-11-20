@@ -10,6 +10,7 @@ public class Player : Fighter
     int leftKey, rightKey, upKey, downKey, hitKey;
     public float oldX, oldY;
     public bool isColliding = false;
+    
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
@@ -18,7 +19,8 @@ public class Player : Fighter
         this.upKey = upKey;
         this.hitKey = hitKey;
         _health = 15;
-        
+        _maxHealth = _health;
+        Name = "Teddy";
        
         //scale = 0.5f;
        // Mirror(false, false);
