@@ -10,6 +10,7 @@ public class Player : Fighter
     int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
     public float oldX, oldY;
     public bool isColliding = false;
+    public bool hasPickedUp = false;
     
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
@@ -35,31 +36,54 @@ public class Player : Fighter
 
         if (Input.GetKey(leftKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(-5, 0);
+            if (!hasPickedUp) {
+                Walk(-5, 0);
+            } else {
+                Walk(-1, 0);
+            }
+            
         }
         else if (Input.GetKey(rightKey)) {
-
             SetState(Fighter.State.WALKING);
-            Walk(5, 0);
+            if (!hasPickedUp) {
+                Walk(5, 0);
+            } else {
+                Walk(1, 0);
+            }
+            
         }
 
         oldX = x;
         oldY = y;
         if (Input.GetKey(upKey)) {
             SetState(Fighter.State.WALKING);
-            Walk(0, -5);
+            if (!hasPickedUp) {
+                Walk(0, -5);
+            } else {
+                Walk(0, -1);
+            }
         }
         else if (Input.GetKey(downKey)) {
-
             SetState(Fighter.State.WALKING);
-            Walk(0, 5);
+            if (!hasPickedUp) {
+                Walk(0, 5);
+            } else {
+                Walk(0, 1);
+            }
         }
 
         if (Input.GetKeyDown(hitKey)) {
-            Hit();
+            if (!hasPickedUp) {
+                Hit();
+            }
         }
         if (Input.GetKeyDown(pickUpKey)) {
-            PickUp();
+            if (!hasPickedUp) {
+                PickUpObject();
+            } else {
+                GetPickedUpEnemy().SetState(State.THROWN);
+            }
+            
         }
     }
 

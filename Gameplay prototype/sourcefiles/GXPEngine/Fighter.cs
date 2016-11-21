@@ -11,7 +11,7 @@ public class Fighter : AnimationSprite
     Sprite hand;
     int hitTimer = 0;
     bool isHitting = false;
-    bool isPickingUp = false;
+    bool isPickedUp = false;
     public int score;
     public int _health = 0;
     public int _maxHealth = 0;
@@ -23,12 +23,14 @@ public class Fighter : AnimationSprite
     Sound hitSound;
     bool _enemyHitByPlayer = false; // base for new functionality, doesnt work yet!
     int enemyHitTimer = 0; // base for new functionality, doesnt work yet!
+    Enemy _enemy;
 
     public enum State {
         FIGHTING,
         WALKING,
         WAITING,
-        PICKEDUP
+        PICKEDUP,
+        THROWN
     }
 
     public string Name { get { return charName; } set { charName = value; } }
@@ -125,21 +127,28 @@ public class Fighter : AnimationSprite
             if (item == this) continue;
             if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) {
                 isHitting = true;
-                if (isHitting && !isPickingUp) {
+                if (isHitting && !isPickedUp) {
                     item.x -= scaleX * 40; // Fighter gets knockbacked
                 }
                 if (item is Enemy) { // base for new functionality, doesnt work yet!
                     Enemy enem = item as Enemy;
                     enem.IsEnemyHitByPlayer = true;
-                    enem.isPickingUp = true;
-                    enem.SetState(Fighter.State.PICKEDUP);
+                    if (isPickedUp) {
+                        //enem.isPickingUp = true;
+                        (hand.parent as Player).hasPickedUp = true;
+                        enem.SetState(Fighter.State.PICKEDUP);
+                        _enemy = enem;
+                    }
                 }
-                Console.WriteLine(isPickingUp);
                 (item as Fighter)._health--;
                 (item as Fighter).turnInvurnerable();
                 hitSound.Play();
             }
         }
+    }
+
+    public Enemy GetPickedUpEnemy() {
+        return _enemy;
     }
 
     public void Walk(float moveX, float moveY) {
@@ -179,7 +188,7 @@ public class Fighter : AnimationSprite
     }
 
     private void EndPickUp() {
-        isPickingUp = false;
+        isPickedUp = false;
         hand.visible = false;
     }
 
@@ -197,12 +206,12 @@ public class Fighter : AnimationSprite
         SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
 
-    protected void PickUp() {
+    protected void PickUpObject() {
         if (GetState() == State.WALKING) {
             SetState(State.FIGHTING);
         }
-        if (isPickingUp == false && GetState() == State.FIGHTING) {
-            isPickingUp = true;
+        if (isPickedUp == false && GetState() == State.FIGHTING) {
+            isPickedUp = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;
             // set frame

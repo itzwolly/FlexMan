@@ -11,6 +11,10 @@ public class Enemy : Fighter
     Player target;
     int type = 0;
     float targetPos;            // The position the enemy will take when fighting the player
+    public float oldX, oldY;
+    public bool isPickedUp = false;
+    int throwTimer = 0;
+    int gravity = 7;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -59,6 +63,22 @@ public class Enemy : Fighter
             //SetState(State.FIGHTING);
             //Hit();
         }
+
+        if (GetState() == State.PICKEDUP) {
+            oldX = x;
+            oldY = y;
+            this.rotation = 90;
+            this.x = target.x - width;
+            this.y = (target.y - target.height) - height / 4;
+        }
+
+        if (GetState() == Fighter.State.THROWN) {
+            y += 10;
+            if (y == target.y - height / 4) {
+                SetState(Fighter.State.WAITING);
+            }
+        }
+
         if (_health == 0)
         {
             target.score+=100;
@@ -66,6 +86,8 @@ public class Enemy : Fighter
             Sound enemyDeath = new Sound("death.wav", false, false);
             enemyDeath.Play();
         }
+
+        Console.WriteLine(GetState());
     }
 
     private void ChooseFightingSide()
