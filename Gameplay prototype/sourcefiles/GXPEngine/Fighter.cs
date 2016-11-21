@@ -5,7 +5,7 @@ using System.Text;
 using GXPEngine;
 using System.Drawing;
 
-public class Fighter : AnimationSprite
+public class Fighter : Pausable
 {
     const int HIT_DURATION = 25;
     Sprite hand;
@@ -29,6 +29,7 @@ public class Fighter : AnimationSprite
         FIGHTING,
         WALKING,
         WAITING,
+        WAITINGAFTERTHROW,
         PICKEDUP,
         THROWN
     }
@@ -133,14 +134,15 @@ public class Fighter : AnimationSprite
                 if (item is Enemy) { // base for new functionality, doesnt work yet!
                     Enemy enem = item as Enemy;
                     enem.IsEnemyHitByPlayer = true;
-                    if (isPickedUp) {
-                        //enem.isPickingUp = true;
+                    if (isPickedUp && (hand.parent as Player).hasPickedUp == false) {
                         (hand.parent as Player).hasPickedUp = true;
                         enem.SetState(Fighter.State.PICKEDUP);
                         _enemy = enem;
                     }
                 }
-                (item as Fighter)._health--;
+                if (!isPickedUp) {
+                    (item as Fighter)._health--;
+                }
                 (item as Fighter).turnInvurnerable();
                 hitSound.Play();
             }
@@ -155,8 +157,12 @@ public class Fighter : AnimationSprite
         if (isHitting == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;
-            if (moveX > 0) scaleX = -1.0f;          // Mirror the sprite the correct way
-            if (moveX < 0) scaleX = 1.0f;
+            if (moveX > 0) {
+                scaleX = -1.0f; 
+            }          // Mirror the sprite the correct way
+            if (moveX < 0) {
+                scaleX = 1.0f; 
+            }
             timer++;
             if (timer > 8)
             {
@@ -197,7 +203,7 @@ public class Fighter : AnimationSprite
         {
             SetState(State.FIGHTING);
         }
-        if (isHitting == false && GetState() == State.FIGHTING /*IF THE OTHER GUY IS NOT INVINCIBLE*/) {
+        if (isHitting == false && GetState() == State.FIGHTING) {
             isHitting = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;
@@ -230,8 +236,6 @@ public class Fighter : AnimationSprite
         _collisionHitBox.x -= -15;
 
         _collisionHitBox.visible = false;
-
-        
         return _collisionHitBox;
     }
 
@@ -246,7 +250,7 @@ public class Fighter : AnimationSprite
 
     public int GetHealth()
     {
-        return _health;
+        return (_health < 0 ) ? 0 : _health;
     }
 
     public int GetMaxHealth() {

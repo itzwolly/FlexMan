@@ -13,8 +13,9 @@ public class Enemy : Fighter
     float targetPos;            // The position the enemy will take when fighting the player
     public float oldX, oldY;
     public bool isPickedUp = false;
-    int throwTimer = 0;
-    int gravity = 7;
+    int disabledTimer = 0;
+    bool disabledAfterThrown = false;
+    Sound enemyDeath;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -22,7 +23,8 @@ public class Enemy : Fighter
     public Enemy(string spriteName, int col, int row, Player target)
         : base(spriteName, col, row)
     {
-        this.target = target; 
+        this.target = target;
+        enemyDeath = new Sound("death.wav", false, false);
         _health = 3;
 
     }
@@ -35,16 +37,15 @@ public class Enemy : Fighter
         ChooseFightingSide();
         //WaitingStateBehaviour();
         if (GetState() == State.WALKING) {
+            rotation = 0;
             if (x > targetPos + 2)
             {             // Player is on the left side
                 Walk(-4, 0);
-                //scaleX = 1.0f;
 
             }
             if (x < targetPos - 2)
             {           // Player is on the right side
                 Walk(4, 0);
-                //scaleX = -1.0f;
             }
             else
             {
@@ -74,20 +75,32 @@ public class Enemy : Fighter
 
         if (GetState() == Fighter.State.THROWN) {
             y += 10;
+            x += 20;
             if (y == target.y - height / 4) {
+                _health -= 2;
                 SetState(Fighter.State.WAITING);
+                disabledAfterThrown = true;
+                // on timer set state to walking
             }
         }
 
-        if (_health == 0)
+        if (disabledAfterThrown) {
+            disabledTimer++;
+            if (disabledTimer == 50) {
+                SetState(Fighter.State.WALKING);
+                disabledTimer = 0;
+                disabledAfterThrown = false;
+            }
+        }
+
+        if (_health < 0)
         {
-            target.score+=100;
+            target.score += 100; // we love magic values yay
             Destroy();
-            Sound enemyDeath = new Sound("death.wav", false, false);
             enemyDeath.Play();
         }
 
-        Console.WriteLine(GetState());
+        //Console.WriteLine(GetState());
     }
 
     private void ChooseFightingSide()

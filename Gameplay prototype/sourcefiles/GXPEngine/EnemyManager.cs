@@ -93,6 +93,10 @@ public class EnemyManager : GameObject
         }
     }
 
+    public Enemy GetEnemy() {
+        return enemy;
+    }
+
     public List<Enemy> GetAllEnemies()
     {
         return _listOfEnemies;

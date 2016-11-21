@@ -11,6 +11,7 @@ public class Player : Fighter
     public float oldX, oldY;
     public bool isColliding = false;
     public bool hasPickedUp = false;
+    int _direction = 1;
     
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
@@ -31,9 +32,9 @@ public class Player : Fighter
     void Update()
     {
         base.Update();
+
         oldX = x;
         oldY = y;
-
         if (Input.GetKey(leftKey)) {
             SetState(Fighter.State.WALKING);
             if (!hasPickedUp) {
@@ -86,6 +87,10 @@ public class Player : Fighter
                 SetState(Fighter.State.WALKING);
             }
             
+        }
+
+        if (_health < 0) {
+            Destroy();
         }
     }
 

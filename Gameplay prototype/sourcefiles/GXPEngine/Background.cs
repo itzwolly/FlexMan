@@ -7,7 +7,7 @@ public class Background : Sprite
 {
     Sprite ground;
 
-    public Background() : base("background_v2.png")
+    public Background() : base("background.png")
     {
         ground = new Sprite("Ground.png");
         AddChildAt(ground, 0);
