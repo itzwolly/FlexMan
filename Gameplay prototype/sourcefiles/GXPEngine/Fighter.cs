@@ -45,6 +45,7 @@ public class Fighter : Pausable
 
     public Fighter(string spriteName, int col, int row) : base(spriteName, col, row) {
         Mirror(true, false);
+        scaleX = -1f;
         score = 0;
         SetOrigin(width / 2, height);
         hand = CreateHand();
@@ -162,13 +163,12 @@ public class Fighter : Pausable
                 if (item is Enemy) { 
                     Enemy enem = item as Enemy;
                     enem.IsEnemyHitByPlayer = true; // base for new functionality, doesnt work yet!
-                    if (isPickedUp && (hand.parent as Player).hasPickedUp == false && HasEnoughStamina()) {
+                    if (isPickedUp && (hand.parent as Player).hasPickedUp == false && (hand.parent as Player).HasEnoughStamina()) {
                         (hand.parent as Player).hasPickedUp = true;
-                        Stamina -= 50;
+                        (hand.parent as Player).Stamina -= 50;
                         enem.SetState(State.PICKEDUP);
                         _pickedUpEnemy = enem;
                     }
-                    
                 }
                 if (attackOnce) {
                     return;

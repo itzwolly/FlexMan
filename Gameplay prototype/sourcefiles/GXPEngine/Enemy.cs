@@ -65,7 +65,7 @@ public class Enemy : Fighter
         {
             SetState(State.FIGHTING);
             //Hit();
-            new Timer(750, Hit); // TODO: fix delays
+            //new Timer(750, Hit); // TODO: fix delays
         }
 
         if (GetState() == State.PICKEDUP) {
@@ -78,8 +78,14 @@ public class Enemy : Fighter
 
         if (GetState() == Fighter.State.THROWN) {
             // direction
-            x += 20;
-            y += 10;
+            if (target.direction == 1) { // right
+                x += 20;
+                y += 10;
+            } else { // left
+                x -= 20;
+                y += 10;
+            }
+            
             if (y == target.y - height / 4) {
                 _health -= 2;
                 SetState(State.WAITING);
@@ -91,8 +97,9 @@ public class Enemy : Fighter
         if (disabledAfterThrown) {
             disabledTimer++;
             if (disabledTimer == 50) {
-                SetState(Fighter.State.WALKING);
                 disabledTimer = 0;
+                y += height / 4;
+                SetState(State.WALKING);
                 disabledAfterThrown = false;
             }
         }
