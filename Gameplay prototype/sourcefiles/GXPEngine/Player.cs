@@ -82,6 +82,8 @@ public class Player : Fighter
                 PickUpObject();
             } else {
                 GetPickedUpEnemy().SetState(State.THROWN);
+                hasPickedUp = false;
+                SetState(Fighter.State.WALKING);
             }
             
         }
