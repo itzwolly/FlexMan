@@ -23,3 +23,8 @@ C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\obj
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.pdb
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.exe
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.pdb
+D:\School\Arcade Game\Repository\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.exe
+D:\School\Arcade Game\Repository\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.pdb
+D:\School\Arcade Game\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
+D:\School\Arcade Game\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.exe
+D:\School\Arcade Game\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.pdb

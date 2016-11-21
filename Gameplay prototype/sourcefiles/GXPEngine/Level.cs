@@ -46,16 +46,14 @@ public class Level : GameObject
 
     //update level here
     void Update() {
-        //SetBoundaries();
+        SetBoundaries();
+        PlayerCamera();
+        HandleCamera();
 
         fighterListOrder.Sort((player1, enemy) => player1.y.CompareTo(enemy.y));
         foreach (Fighter obj in fighterListOrder) {
             AddChild(obj);
         }
-
-        PlayerCamera();
-
-        HandleCamera();
     }
 
     public void PlayerCamera()

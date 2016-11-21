@@ -12,9 +12,12 @@ public class Player : Fighter
     public bool isColliding = false;
     public bool hasPickedUp = false;
     public int playerAttackTimer = 0;
-    bool startAttackTimer = false;
+    //bool startAttackTimer = false;
     public int playerAttackAmount = 0;
     bool allowedToHit = true;
+    int hitCount = 0;
+    int hitDelayTimer = 0;
+    public int direction = 1; // 0 = left, 1 = right
 
     public bool GetInvincible {
         get {
@@ -42,6 +45,7 @@ public class Player : Fighter
         oldX = x;
         oldY = y;
         if (Input.GetKey(leftKey)) {
+            direction = 0;
             SetState(Fighter.State.WALKING);
             if (!hasPickedUp) {
                 Walk(-5, 0);
@@ -52,12 +56,12 @@ public class Player : Fighter
         }
         else if (Input.GetKey(rightKey)) {
             SetState(Fighter.State.WALKING);
+            direction = 1;
             if (!hasPickedUp) {
                 Walk(5, 0);
             } else {
                 Walk(1, 0);
             }
-            
         }
 
         oldX = x;
@@ -80,28 +84,24 @@ public class Player : Fighter
         }
 
         if (Input.GetKeyDown(hitKey)) {
-            if (!hasPickedUp) {
-                startAttackTimer = true;
-                if (allowedToHit) {
-                    Hit();
+            // some form of delay
+            if (!hasPickedUp && allowedToHit) {
+                hitCount++;
+                if (hitCount == 3) {
+                    allowedToHit = false;
+                    hitCount = 0;
                 }
+                Hit();
             }
         }
 
-        if (startAttackTimer) {
-            if (playerAttackAmount == 3) {
-                allowedToHit = false;
-                playerAttackTimer++;
-                if (playerAttackTimer == 50) {
-                    allowedToHit = true;
-                    playerAttackTimer = 0;
-                }
+        // some form of delay PART 2: the DELAYING
+        if (!allowedToHit) {
+            hitDelayTimer++;
+            if (hitDelayTimer == 50) {
+                allowedToHit = true;
+                hitDelayTimer = 0;
             }
-            //if (playerAttackTimer == 50) {
-            //    // allowed to attack 3 times
-            //    playerAttackTimer = 0;
-            //    startAttackTimer = false;
-            //}
         }
 
         if (Input.GetKeyDown(pickUpKey)) {

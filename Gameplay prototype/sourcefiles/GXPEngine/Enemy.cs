@@ -65,7 +65,10 @@ public class Enemy : Fighter
         {
             SetState(State.FIGHTING);
             //Hit();
-            //new Timer(750, Hit); // TODO: fix delays
+            if (GetState() != State.PICKEDUP)
+            {
+                new Timer(750, Hit); // TODO: fix delay
+            }
         }
 
         if (GetState() == State.PICKEDUP) {

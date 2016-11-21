@@ -210,7 +210,7 @@ public class Fighter : Pausable
     }
 
     public void Walk(float moveX, float moveY) {
-        if (isHitting == false && GetState() == State.WALKING) {
+        if (isHitting == false && isPickedUp == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;
             if (moveX > 0) {
@@ -259,6 +259,10 @@ public class Fighter : Pausable
         if (GetState() == State.WALKING)
         {
             SetState(State.FIGHTING);
+        }
+        if (GetState() == State.PICKEDUP)
+        {
+            return;
         }
         if (isHitting == false && GetState() == State.FIGHTING) {
             isHitting = true;
