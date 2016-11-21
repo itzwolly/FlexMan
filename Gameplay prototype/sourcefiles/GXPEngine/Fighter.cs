@@ -11,6 +11,7 @@ public class Fighter : AnimationSprite
     Sprite hand;
     int hitTimer = 0;
     bool isHitting = false;
+    bool isPickingUp = false;
     public int score;
     public int _health = 0;
     public int _maxHealth = 0;
@@ -26,7 +27,8 @@ public class Fighter : AnimationSprite
     public enum State {
         FIGHTING,
         WALKING,
-        WAITING
+        WAITING,
+        PICKEDUP
     }
 
     public string Name { get { return charName; } set { charName = value; } }
@@ -89,6 +91,7 @@ public class Fighter : AnimationSprite
             hitTimer--;
             if (hitTimer == 0) {
                 EndHit();
+                EndPickUp();
             }
         }
     }
@@ -116,13 +119,22 @@ public class Fighter : AnimationSprite
             //Console.WriteLine(this.GetType());
             //Console.WriteLine(item.y);
             //Console.WriteLine(y);
+            if (item is Enemy && hand.parent is Enemy) {
+                continue;
+            }
             if (item == this) continue;
             if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) {
                 isHitting = true;
-                item.x -= scaleX * 40; // Fighter gets knockbacked
-                if (item is Enemy) { // base for new functionality, doesnt work yet!
-                    (item as Enemy).IsEnemyHitByPlayer = true;
+                if (isHitting && !isPickingUp) {
+                    item.x -= scaleX * 40; // Fighter gets knockbacked
                 }
+                if (item is Enemy) { // base for new functionality, doesnt work yet!
+                    Enemy enem = item as Enemy;
+                    enem.IsEnemyHitByPlayer = true;
+                    enem.isPickingUp = true;
+                    enem.SetState(Fighter.State.PICKEDUP);
+                }
+                Console.WriteLine(isPickingUp);
                 (item as Fighter)._health--;
                 (item as Fighter).turnInvurnerable();
                 hitSound.Play();
@@ -166,6 +178,11 @@ public class Fighter : AnimationSprite
         hand.visible = false;
     }
 
+    private void EndPickUp() {
+        isPickingUp = false;
+        hand.visible = false;
+    }
+
     protected void Hit() {
         if (GetState() == State.WALKING)
         {
@@ -178,6 +195,19 @@ public class Fighter : AnimationSprite
             currentFrame = 6;
         }
         SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
+    }
+
+    protected void PickUp() {
+        if (GetState() == State.WALKING) {
+            SetState(State.FIGHTING);
+        }
+        if (isPickingUp == false && GetState() == State.FIGHTING) {
+            isPickingUp = true;
+            hand.visible = true;
+            hitTimer = HIT_DURATION;
+            // set frame
+        }
+        // do something
     }
 
     protected Canvas CreateHitBox()

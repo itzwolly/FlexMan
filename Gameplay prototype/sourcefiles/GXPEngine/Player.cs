@@ -7,17 +7,18 @@ using GXPEngine;
 
 public class Player : Fighter
 {
-    int leftKey, rightKey, upKey, downKey, hitKey;
+    int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
     public float oldX, oldY;
     public bool isColliding = false;
     
 
-    public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int col, int row) : base(spriteName, col, row) {
+    public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.downKey = downKey;
         this.upKey = upKey;
         this.hitKey = hitKey;
+        this.pickUpKey = pickUpKey;
         _health = 15;
         _maxHealth = _health;
         Name = "Teddy";
@@ -53,8 +54,12 @@ public class Player : Fighter
             SetState(Fighter.State.WALKING);
             Walk(0, 5);
         }
+
         if (Input.GetKeyDown(hitKey)) {
             Hit();
+        }
+        if (Input.GetKeyDown(pickUpKey)) {
+            PickUp();
         }
     }
 

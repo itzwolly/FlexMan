@@ -17,7 +17,7 @@ public class Level : GameObject
     {
         _myGame = pMyGame;
 
-        player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, 8, 1);
+        player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
         AddChildAt(player1, 1);
         player1.SetXY(100, 600);
 

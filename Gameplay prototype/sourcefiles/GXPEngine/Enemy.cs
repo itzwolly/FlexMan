@@ -56,8 +56,8 @@ public class Enemy : Fighter
         }
         if (target.DistanceTo(this) < target.width && GetState() == State.WALKING && target.GetInvincible == false/* IF PLAYER TARGET IS NOT INVINCIBLE*/ )
         {
-            SetState(State.FIGHTING);
-            Hit();
+            //SetState(State.FIGHTING);
+            //Hit();
         }
         if (_health == 0)
         {
