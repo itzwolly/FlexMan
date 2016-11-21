@@ -85,24 +85,25 @@ public class Player : Fighter
 
         if (Input.GetKeyDown(hitKey)) {
             // some form of delay
-            if (!hasPickedUp && allowedToHit) {
-                hitCount++;
-                if (hitCount == 3) {
-                    allowedToHit = false;
-                    hitCount = 0;
-                }
-                Hit();
-            }
+            //if (!hasPickedUp && allowedToHit) {
+            //    hitCount++;
+            //    if (hitCount == 3) {
+            //        allowedToHit = false;
+            //        hitCount = 0;
+            //    }
+            //    Hit();
+            //}
+            Hit();
         }
 
         // some form of delay PART 2: the DELAYING
-        if (!allowedToHit) {
-            hitDelayTimer++;
-            if (hitDelayTimer == 50) {
-                allowedToHit = true;
-                hitDelayTimer = 0;
-            }
-        }
+        //if (!allowedToHit) {
+        //    hitDelayTimer++;
+        //    if (hitDelayTimer == 50) {
+        //        allowedToHit = true;
+        //        hitDelayTimer = 0;
+        //    }
+        //}
 
         if (Input.GetKeyDown(pickUpKey)) {
             if (!hasPickedUp) {
@@ -114,7 +115,7 @@ public class Player : Fighter
             }
             
         }
-        if (_health < 0) {
+        if (_health <= 0) {
             Destroy();
         }
     }

@@ -17,6 +17,7 @@ public class Enemy : Fighter
     bool disabledAfterThrown = false;
     Sound enemyDeath;
     public int gotHitAmount = 0;
+    int doHitTimer = 0;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -64,11 +65,12 @@ public class Enemy : Fighter
         if (target.DistanceTo(this) < target.width && GetState() == State.WALKING)
         {
             SetState(State.FIGHTING);
-            //Hit();
-            if (GetState() != State.PICKEDUP)
-            {
-                new Timer(750, Hit); // TODO: fix delay
-            }
+            EnemyHit();
+
+            //if (GetState() == State.FIGHTING)
+            //{
+            //    new Timer(850, Hit); // TODO: fix delay
+            //}
         }
 
         if (GetState() == State.PICKEDUP) {

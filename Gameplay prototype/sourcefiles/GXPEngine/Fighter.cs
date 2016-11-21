@@ -24,11 +24,13 @@ public class Fighter : Pausable
     Sound hitSound;
     bool _enemyHitByPlayer = false; // base for new functionality, doesnt work yet!
     int enemyHitTimer = 0; // base for new functionality, doesnt work yet!
+    int enemyHitCountTimer = 0;
     Enemy _pickedUpEnemy;
     int _stamina;
     bool attackOnce = false;
     public float oldX, oldY;
     int disabledTimer = 0;
+    bool isFirstTimeAttacking = true;
 
     public enum State {
         FIGHTING,
@@ -265,6 +267,31 @@ public class Fighter : Pausable
             return;
         }
         if (isHitting == false && GetState() == State.FIGHTING) {
+            isHitting = true;
+            hand.visible = true;
+            hitTimer = HIT_DURATION;
+            currentFrame = 6;
+        }
+        SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
+    }
+
+    protected void EnemyHit() {
+        if (GetState() == State.WALKING) {
+            SetState(State.FIGHTING);
+        }
+        if (GetState() == State.PICKEDUP) {
+            return;
+        }
+
+        if (isFirstTimeAttacking) {
+            enemyHitCountTimer = 85;
+            isFirstTimeAttacking = false;
+        } else {
+            enemyHitCountTimer++;
+        }
+        
+        if (isHitting == false && GetState() == State.FIGHTING && enemyHitCountTimer == 85) {
+            enemyHitCountTimer = 0;
             isHitting = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;

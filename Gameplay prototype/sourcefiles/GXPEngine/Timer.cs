@@ -12,8 +12,6 @@ namespace GXPEngine
         {
             _onTimeout = onTimeout;
             _time = timeOut;
-
-            
         }
 
         private void Update()
