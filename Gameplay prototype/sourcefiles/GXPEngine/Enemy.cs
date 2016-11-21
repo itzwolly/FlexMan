@@ -11,11 +11,12 @@ public class Enemy : Fighter
     Player target;
     int type = 0;
     float targetPos;            // The position the enemy will take when fighting the player
-    public float oldX, oldY;
+    //public float oldX, oldY;
     public bool isPickedUp = false;
     int disabledTimer = 0;
     bool disabledAfterThrown = false;
     Sound enemyDeath;
+    public int gotHitAmount = 0;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -25,7 +26,7 @@ public class Enemy : Fighter
     {
         this.target = target;
         enemyDeath = new Sound("death.wav", false, false);
-        _health = 3;
+        _health = 4;
 
     }
 
@@ -36,6 +37,7 @@ public class Enemy : Fighter
         MirrorToPlayer();
         ChooseFightingSide();
         //WaitingStateBehaviour();
+
         if (GetState() == State.WALKING) {
             rotation = 0;
             if (x > targetPos + 2)
@@ -59,10 +61,11 @@ public class Enemy : Fighter
                 }
             }
         }
-        if (target.DistanceTo(this) < target.width && GetState() == State.WALKING && target.GetInvincible == false/* IF PLAYER TARGET IS NOT INVINCIBLE*/ )
+        if (target.DistanceTo(this) < target.width && GetState() == State.WALKING)
         {
-            //SetState(State.FIGHTING);
+            SetState(State.FIGHTING);
             //Hit();
+            new Timer(750, Hit); // TODO: fix delays
         }
 
         if (GetState() == State.PICKEDUP) {
@@ -74,11 +77,12 @@ public class Enemy : Fighter
         }
 
         if (GetState() == Fighter.State.THROWN) {
-            y += 10;
+            // direction
             x += 20;
+            y += 10;
             if (y == target.y - height / 4) {
                 _health -= 2;
-                SetState(Fighter.State.WAITING);
+                SetState(State.WAITING);
                 disabledAfterThrown = true;
                 // on timer set state to walking
             }
@@ -93,7 +97,7 @@ public class Enemy : Fighter
             }
         }
 
-        if (_health < 0)
+        if (_health <= 0)
         {
             target.score += 100; // we love magic values yay
             Destroy();

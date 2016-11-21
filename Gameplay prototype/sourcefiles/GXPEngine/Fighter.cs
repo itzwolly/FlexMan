@@ -10,6 +10,7 @@ public class Fighter : Pausable
     const int HIT_DURATION = 25;
     Sprite hand;
     int hitTimer = 0;
+    int staminaTimer = 0;
     bool isHitting = false;
     bool isPickedUp = false;
     public int score;
@@ -23,19 +24,24 @@ public class Fighter : Pausable
     Sound hitSound;
     bool _enemyHitByPlayer = false; // base for new functionality, doesnt work yet!
     int enemyHitTimer = 0; // base for new functionality, doesnt work yet!
-    Enemy _enemy;
+    Enemy _pickedUpEnemy;
+    int _stamina;
+    bool attackOnce = false;
+    public float oldX, oldY;
+    int disabledTimer = 0;
 
     public enum State {
         FIGHTING,
         WALKING,
         WAITING,
-        WAITINGAFTERTHROW,
+        DISABLED,
         PICKEDUP,
         THROWN
     }
 
     public string Name { get { return charName; } set { charName = value; } }
     public bool IsEnemyHitByPlayer { get { return _enemyHitByPlayer; } set { _enemyHitByPlayer = value; } }
+    public int Stamina { get { return (_stamina < 100 ? _stamina : 100); } set { _stamina = value; } }
 
     public Fighter(string spriteName, int col, int row) : base(spriteName, col, row) {
         Mirror(true, false);
@@ -77,6 +83,18 @@ public class Fighter : Pausable
             IsEnemyHitByPlayer = false;
         }
 
+        DisableFighter(true, 30);
+
+        if (!isPickedUp) {
+            staminaTimer++;
+            if (staminaTimer == 150) {
+                staminaTimer = 0;
+                if (Stamina < 100) {
+                    Stamina += 10;
+                }
+            }
+        }
+
         if (Input.GetKeyDown(Key.R))
         {
             _collisionHitBox.visible = true;
@@ -85,6 +103,19 @@ public class Fighter : Pausable
         if (Input.GetKeyDown(Key.T))
         {
             _collisionHitBox.visible = false;
+        }
+    }
+
+    public void DisableFighter(bool isEnemy, int amount) {
+        if (GetState() == State.DISABLED) {
+            disabledTimer++;
+            if (disabledTimer == 35) {
+                SetState(State.WALKING);
+                if (isEnemy) {
+                    y += height / 3;
+                }
+                disabledTimer = 0;
+            }
         }
     }
 
@@ -126,31 +157,56 @@ public class Fighter : Pausable
                 continue;
             }
             if (item == this) continue;
-            if (item is Fighter && item.y + 100 >= y && item.y - 100 <= y && (item as Fighter)._invincible == false) {
+            if (item is Fighter && item.y + 20 >= y && item.y - 20 <= y) { // && fighter.invincible == false
                 isHitting = true;
-                if (isHitting && !isPickedUp) {
-                    item.x -= scaleX * 40; // Fighter gets knockbacked
-                }
-                if (item is Enemy) { // base for new functionality, doesnt work yet!
+                if (item is Enemy) { 
                     Enemy enem = item as Enemy;
-                    enem.IsEnemyHitByPlayer = true;
-                    if (isPickedUp && (hand.parent as Player).hasPickedUp == false) {
+                    enem.IsEnemyHitByPlayer = true; // base for new functionality, doesnt work yet!
+                    if (isPickedUp && (hand.parent as Player).hasPickedUp == false && HasEnoughStamina()) {
                         (hand.parent as Player).hasPickedUp = true;
-                        enem.SetState(Fighter.State.PICKEDUP);
-                        _enemy = enem;
+                        Stamina -= 50;
+                        enem.SetState(State.PICKEDUP);
+                        _pickedUpEnemy = enem;
                     }
+                    
                 }
+                if (attackOnce) {
+                    return;
+                }
+                attackOnce = true;
                 if (!isPickedUp) {
                     (item as Fighter)._health--;
+                    //(item as Fighter).turnInvurnerable();
+                    //hitSound.Play();
                 }
-                (item as Fighter).turnInvurnerable();
-                hitSound.Play();
+                if (item is Enemy) {
+                    (item as Enemy).gotHitAmount++;
+                    if (isHitting && !isPickedUp && (item as Enemy).gotHitAmount == 3) {
+                        (item as Enemy).oldX = item.x;
+                        item.x -= scaleX * 150; // Fighter gets knockbacked
+                        item.y -= (item as Fighter).height / 3;
+                        if (item.x < (item as Fighter).oldX) {
+                            item.rotation = 270;
+                        } else {
+                            item.rotation = 90;
+                        }
+                        (item as Enemy).SetState(Fighter.State.DISABLED);
+                    }
+                }
             }
+        }
+    }
+    
+    public bool HasEnoughStamina() {
+        if (Stamina - 50 >= 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     public Enemy GetPickedUpEnemy() {
-        return _enemy;
+        return _pickedUpEnemy;
     }
 
     public void Walk(float moveX, float moveY) {
@@ -191,6 +247,7 @@ public class Fighter : Pausable
     private void EndHit() {
         isHitting = false;
         hand.visible = false;
+        attackOnce = false;
     }
 
     private void EndPickUp() {
@@ -212,17 +269,28 @@ public class Fighter : Pausable
         SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
 
+    protected void HandleGenericGuyHit() {
+        if (GetState() == State.WALKING) {
+            SetState(State.FIGHTING);
+        }
+        if (isHitting == false && GetState() == State.FIGHTING) {
+            isHitting = true;
+            hand.visible = true;
+            hitTimer = HIT_DURATION;
+            currentFrame = 6;
+        }
+        SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
+    }
+
     protected void PickUpObject() {
         if (GetState() == State.WALKING) {
             SetState(State.FIGHTING);
         }
-        if (isPickedUp == false && GetState() == State.FIGHTING) {
+        if (isPickedUp == false && HasEnoughStamina() && GetState() == State.FIGHTING) {
             isPickedUp = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;
-            // set frame
         }
-        // do something
     }
 
     protected Canvas CreateHitBox()

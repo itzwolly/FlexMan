@@ -47,11 +47,13 @@ public class HUD : Sprite
         try
         {
             _playerInfo.graphics.Clear(Color.Transparent);
-            _playerInfo.graphics.DrawString(_player.Name, _font, Brushes.White, 225, 40);
+            _playerInfo.graphics.DrawString(_player.Name, _font, Brushes.White, 225, 50);
             _playerInfo.graphics.DrawString(_player.GetHealth().ToString(), _font, Brushes.White, 225, 80);
             _playerInfo.graphics.DrawString(" HP", _font, (_player.GetHealth() < Mathf.Floor(_player.GetMaxHealth() / 2)) ? Brushes.Red : Brushes.Green, 250, 80);
             _playerInfo.graphics.DrawString(_player.GetScore().ToString(), _font, Brushes.White, 375, 50);
             _playerInfo.graphics.DrawString("PTS", _font, Brushes.Orange, 450, 50);
+            _playerInfo.graphics.DrawString(_player.Stamina.ToString(), _font, (_player.HasEnoughStamina() ? Brushes.Green : Brushes.Red), 375, 80);
+            _playerInfo.graphics.DrawString("STM", _font, (_player.HasEnoughStamina() ? Brushes.Green : Brushes.Red), 450, 80);
 
             if (_enemyInfo != null) {
                 _enemyInfo.graphics.Clear(Color.Transparent);

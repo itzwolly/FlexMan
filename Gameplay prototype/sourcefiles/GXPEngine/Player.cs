@@ -8,11 +8,19 @@ using GXPEngine;
 public class Player : Fighter
 {
     int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
-    public float oldX, oldY;
+    //public float oldX, oldY;
     public bool isColliding = false;
     public bool hasPickedUp = false;
-    int _direction = 1;
-    
+    public int playerAttackTimer = 0;
+    bool startAttackTimer = false;
+    public int playerAttackAmount = 0;
+    bool allowedToHit = true;
+
+    public bool GetInvincible {
+        get {
+            return _invincible;
+        }
+    }
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
@@ -21,12 +29,10 @@ public class Player : Fighter
         this.upKey = upKey;
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
+        Name = "Teddy";
         _health = 15;
         _maxHealth = _health;
-        Name = "Teddy";
-       
-        //scale = 0.5f;
-       // Mirror(false, false);
+        Stamina = 100;
     }
 
     void Update()
@@ -75,9 +81,29 @@ public class Player : Fighter
 
         if (Input.GetKeyDown(hitKey)) {
             if (!hasPickedUp) {
-                Hit();
+                startAttackTimer = true;
+                if (allowedToHit) {
+                    Hit();
+                }
             }
         }
+
+        if (startAttackTimer) {
+            if (playerAttackAmount == 3) {
+                allowedToHit = false;
+                playerAttackTimer++;
+                if (playerAttackTimer == 50) {
+                    allowedToHit = true;
+                    playerAttackTimer = 0;
+                }
+            }
+            //if (playerAttackTimer == 50) {
+            //    // allowed to attack 3 times
+            //    playerAttackTimer = 0;
+            //    startAttackTimer = false;
+            //}
+        }
+
         if (Input.GetKeyDown(pickUpKey)) {
             if (!hasPickedUp) {
                 PickUpObject();
@@ -88,17 +114,8 @@ public class Player : Fighter
             }
             
         }
-
         if (_health < 0) {
             Destroy();
-        }
-    }
-
-    public bool GetInvincible
-    {
-        get
-        {
-            return _invincible;
         }
     }
 }
