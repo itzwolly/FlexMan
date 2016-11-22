@@ -33,7 +33,7 @@ public class Player : Fighter
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
         Name = "Teddy";
-        _health = 15;
+        _health = 30;
         _maxHealth = _health;
         Stamina = 100;
     }
@@ -43,7 +43,7 @@ public class Player : Fighter
         base.Update();
 
         oldX = x;
-        oldY = y;
+        oldY = y; 
         if (Input.GetKey(leftKey)) {
             direction = 0;
             SetState(Fighter.State.WALKING);
@@ -84,26 +84,26 @@ public class Player : Fighter
         }
 
         if (Input.GetKeyDown(hitKey)) {
-            // some form of delay
-            //if (!hasPickedUp && allowedToHit) {
-            //    hitCount++;
-            //    if (hitCount == 3) {
-            //        allowedToHit = false;
-            //        hitCount = 0;
-            //    }
-            //    Hit();
-            //}
-            Hit();
+             //some form of delay
+            if (!hasPickedUp && allowedToHit) {
+                hitCount++;
+                if (hitCount == 3) {
+                    allowedToHit = false;
+                    hitCount = 0;
+                }
+                Hit();
+            }
+            //Hit();
         }
 
-        // some form of delay PART 2: the DELAYING
-        //if (!allowedToHit) {
-        //    hitDelayTimer++;
-        //    if (hitDelayTimer == 50) {
-        //        allowedToHit = true;
-        //        hitDelayTimer = 0;
-        //    }
-        //}
+         //some form of delay PART 2: the DELAYING
+        if (!allowedToHit) {
+            hitDelayTimer++;
+            if (hitDelayTimer == 50) {
+                allowedToHit = true;
+                hitDelayTimer = 0;
+            }
+        }
 
         if (Input.GetKeyDown(pickUpKey)) {
             if (!hasPickedUp) {

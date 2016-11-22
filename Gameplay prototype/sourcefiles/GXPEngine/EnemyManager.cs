@@ -16,7 +16,7 @@ public class EnemyManager : GameObject
     }
 
     public void createEnemies() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             enemy = new Enemy("red.png", 8, 1, _player);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);

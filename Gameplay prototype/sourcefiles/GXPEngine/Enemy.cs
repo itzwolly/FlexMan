@@ -18,9 +18,10 @@ public class Enemy : Fighter
     Sound enemyDeath;
     public int gotHitAmount = 0;
     int doHitTimer = 0;
+    bool isThrown = false;
+    int direction = 0;
 
     public int Type { get { return type; } set { type = value; } }
-
 
     public Enemy(string spriteName, int col, int row, Player target)
         : base(spriteName, col, row)
@@ -76,21 +77,20 @@ public class Enemy : Fighter
         if (GetState() == State.PICKEDUP) {
             oldX = x;
             oldY = y;
+            
             this.rotation = 90;
             this.x = target.x - width;
             this.y = (target.y - target.height) - height / 4;
         }
 
         if (GetState() == Fighter.State.THROWN) {
-            // direction
-            if (target.direction == 1) { // right
+            if (direction == 1) { // right
                 x += 20;
                 y += 10;
-            } else { // left
+            } else if (direction == 0) { // left
                 x -= 20;
                 y += 10;
             }
-            
             if (y == target.y - height / 4) {
                 _health -= 2;
                 SetState(State.WAITING);
@@ -101,7 +101,7 @@ public class Enemy : Fighter
 
         if (disabledAfterThrown) {
             disabledTimer++;
-            if (disabledTimer == 50) {
+            if (disabledTimer == 100) {
                 disabledTimer = 0;
                 y += height / 4;
                 SetState(State.WALKING);
@@ -117,6 +117,13 @@ public class Enemy : Fighter
         }
 
         //Console.WriteLine(GetState());
+    }
+
+    public override void SetState(State pState) {
+        base.SetState(pState);
+        if (pState == State.THROWN) {
+            direction = target.direction;
+        }
     }
 
     private void ChooseFightingSide()

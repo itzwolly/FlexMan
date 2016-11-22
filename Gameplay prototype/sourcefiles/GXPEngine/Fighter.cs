@@ -31,6 +31,7 @@ public class Fighter : Pausable
     public float oldX, oldY;
     int disabledTimer = 0;
     bool isFirstTimeAttacking = true;
+    int direction = 0;
 
     public enum State {
         FIGHTING,
@@ -55,7 +56,7 @@ public class Fighter : Pausable
         _collisionHitBox = CreateHitBox();
     }
 
-    public void SetState(State pState) {
+    public virtual void SetState(State pState) {
         _state = pState;
     }
 
@@ -176,6 +177,7 @@ public class Fighter : Pausable
                     return;
                 }
                 attackOnce = true;
+
                 if (!isPickedUp) {
                     (item as Fighter)._health--;
                     //(item as Fighter).turnInvurnerable();
