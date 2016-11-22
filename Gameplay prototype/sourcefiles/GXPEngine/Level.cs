@@ -105,8 +105,8 @@ public class Level : GameObject
             player1.x = player1.width - (player1.width / 2);
         }
 
-        if (player1.x > _myGame.width + (_myGame.width / 4) - (player1.width / 4)) {
-            player1.x = _myGame.width + (_myGame.width / 4) - (player1.width / 4);
+        if (player1.x > _myGame.width + (_myGame.width) - (player1.width / 4)) {
+            player1.x = _myGame.width + (_myGame.width) - (player1.width / 4);
         }
 
         if (player1.x < 0 + (player1.width / 4))

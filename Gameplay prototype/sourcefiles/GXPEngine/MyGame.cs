@@ -15,19 +15,10 @@ public class MyGame : Game { //MyGame is a Game
         hud = new HUD(_level.GetPlayer());
         hud.y = game.height - hud.height;
         AddChildAt(hud, 1);
-
-        foreach (GameObject obj in GetCollisions()) {
-            Console.WriteLine(obj);
-        }
-        
     }
 
     void Update() {
         
-    }
-
-    public Level GetLevel() {
-        return _level;
     }
 
     //system starts here
