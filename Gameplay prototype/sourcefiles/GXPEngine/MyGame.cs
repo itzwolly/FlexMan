@@ -12,13 +12,9 @@ public class MyGame : Game { //MyGame is a Game
         _level = new Level(this);
         AddChild(_level);
 
-        hud = new HUD(_level.GetPlayer());
+        hud = new HUD(_level, _level.GetPlayer());
         hud.y = game.height - hud.height;
         AddChildAt(hud, 1);
-    }
-
-    void Update() {
-        
     }
 
     //system starts here

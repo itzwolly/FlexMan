@@ -7,6 +7,7 @@ using GXPEngine;
 
 public class Enemy : Fighter
 {
+    public const int SCORE_INCREMENT = 100;
     int time = 0;
     Player target;
     int type = 0;
@@ -17,8 +18,6 @@ public class Enemy : Fighter
     bool disabledAfterThrown = false;
     Sound enemyDeath;
     public int gotHitAmount = 0;
-    int doHitTimer = 0;
-    bool isThrown = false;
     int direction = 0;
 
     public int Type { get { return type; } set { type = value; } }
@@ -111,7 +110,7 @@ public class Enemy : Fighter
 
         if (_health <= 0)
         {
-            target.score += 100; // we love magic values yay
+            target.score += SCORE_INCREMENT; // we love magic values yay
             Destroy();
             enemyDeath.Play();
         }
@@ -161,6 +160,4 @@ public class Enemy : Fighter
             SetState(State.WAITING);
         }
     }
-
-
 }
