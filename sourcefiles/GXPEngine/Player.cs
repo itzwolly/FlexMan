@@ -7,6 +7,8 @@ using GXPEngine;
 
 public class Player : Fighter
 {
+    const int HEALTH_INCREMENT = 5;
+
     int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
     //public float oldX, oldY;
     public bool isColliding = false;
@@ -28,7 +30,7 @@ public class Player : Fighter
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
         Name = "Flexman";
-        _health = 1000000;
+        _health = 30;
         _maxHealth = _health;
         Stamina = 100;
         _maxStamina = Stamina;
@@ -98,7 +100,6 @@ public class Player : Fighter
             }
             //Hit();
         }
-        Console.WriteLine(comboAttackCount);
          //some form of delay PART 2: the DELAYING
         if (!allowedToHit) {
             hitDelayTimer++;
@@ -121,5 +122,32 @@ public class Player : Fighter
             Destroy();
             playerDeath.Play();
         }
+
+        foreach(GameObject item in GetCollisions())
+        {
+            if (item is Item)
+            {
+                Item newItem = item as Item;
+                PickUpItem(newItem);
+            }
+        }
+    }
+
+    private void PickUpItem(Item other)
+    {
+        other.Destroy();
+        int difference = GetMaxHealth() - GetHealth();
+
+        if (difference > 0)
+        {
+            if (difference < HEALTH_INCREMENT)
+            {
+                _health += difference;
+            } else
+            {
+                _health += HEALTH_INCREMENT;
+            }
+        }
+
     }
 }
