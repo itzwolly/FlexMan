@@ -17,6 +17,7 @@ public class Level : GameObject
     SoundChannel playMusic;
     bool startedPlaying = true;
     Item healthItem;
+    int _randomNumber;
 
 
     //initialize game here
@@ -147,8 +148,14 @@ public class Level : GameObject
             healthItem.scale = 0.5f;
             healthItem.SetOrigin(healthItem.width / 2, healthItem.height / 2);
             healthItem.x = (e.NewItems[0] as Enemy).x;
-            healthItem.y = (e.NewItems[0] as Enemy).y;
-            AddChildAt(healthItem, 20);
+            healthItem.y = (e.NewItems[0] as Enemy).y - 200;
+
+            _randomNumber = Utils.Random(0, 8);
+            Console.WriteLine(_randomNumber);
+            if (_randomNumber == 7)
+            {
+                AddChildAt(healthItem, 20);
+            }
         }
     }
 
