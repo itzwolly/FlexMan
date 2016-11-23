@@ -9,7 +9,6 @@ public class EnemyManager : GameObject
     List<Enemy> _listOfEnemies = new List<Enemy>();
     Enemy enemy;
     Player _player;
-    Item healthItem;
     int[] enemyPosition = new int[] { 0, 0 };
 
     public EnemyManager(Player pPlayer) {
@@ -18,7 +17,7 @@ public class EnemyManager : GameObject
 
     public void createEnemies() {
         for (int i = 0; i < 5; i++) {
-            enemy = new Enemy("assets\\red.png", 8, 1, _player);
+            enemy = new Enemy("red.png", 8, 1, _player);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);
             try {
