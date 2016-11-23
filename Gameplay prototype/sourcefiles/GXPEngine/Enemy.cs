@@ -12,11 +12,10 @@ public class Enemy : Fighter
     Player target;
     int type = 0;
     float targetPos;            // The position the enemy will take when fighting the player
-    //public float oldX, oldY;
     public bool isPickedUp = false;
     int disabledTimer = 0;
     bool disabledAfterThrown = false;
-    Sound enemyDeath;
+    Sound enemyDeathOne, enemyDeathTwo, enemyDeathThree;
     public int gotHitAmount = 0;
     int direction = 0;
 
@@ -26,9 +25,10 @@ public class Enemy : Fighter
         : base(spriteName, col, row)
     {
         this.target = target;
-        enemyDeath = new Sound("death.wav", false, false);
         _health = 4;
-
+        enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
+        enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
+        enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
     }
 
     void Update()
@@ -37,46 +37,72 @@ public class Enemy : Fighter
 
         MirrorToPlayer();
         ChooseFightingSide();
-        //WaitingStateBehaviour();
-
-        if (GetState() == State.WALKING) {
+        if (GetState() != State.PICKEDUP && GetState() != State.THROWN) {
             rotation = 0;
-            if (x > targetPos + 2)
-            {             // Player is on the left side
+        }
+        if (GetState() == State.WAITAFTERTHROWN) {
+            rotation = 90;
+        }
+        if (GetState() == State.DISABLED) {
+            if (x < oldX) {
+                rotation = 270;
+            } else {
+                rotation = 90;
+            }
+        }
+        
+        if (x > targetPos + 2) { // Player is on the left side
+            if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.DISABLED && GetState() != State.WAITAFTERTHROWN) {
+                SetState(State.WALKING);
+            }
+            if (GetState() == State.WALKING) {
                 Walk(-4, 0);
-
             }
-            if (x < targetPos - 2)
-            {           // Player is on the right side
-                Walk(4, 0);
-            }
-            else
-            {
-                if (y > target.y)
-                {              // Player is above the enemy
-                    Walk(0, -4);
-                }
-                if (y < target.y)
-                {              // Player is below the enemy
-                    Walk(0, 4);
+        } else {
+            if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN && GetState() != State.WAITAFTERTHROWN) {
+                if (target.y + 10 >= y && target.y - 10 <= y) {
+                    SetState(State.FIGHTING);
+                } else {
+                    SetState(State.WALKING);
                 }
             }
         }
-        if (target.DistanceTo(this) < target.width && GetState() == State.WALKING)
-        {
-            SetState(State.FIGHTING);
-            EnemyHit();
 
-            //if (GetState() == State.FIGHTING)
-            //{
-            //    new Timer(850, Hit); // TODO: fix delay
-            //}
+        if (x < targetPos - 2) { // Player is on the right side
+            if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.DISABLED && GetState() != State.WAITAFTERTHROWN) {
+                SetState(State.WALKING);
+            }
+            if (GetState() == State.WALKING) {
+                Walk(4, 0);
+            }
+        } else {
+            if (y > target.y) { // Player is above the enemy
+                Walk(0, -4);
+            }
+            if (y < target.y) {  // Player is below the enemy
+                Walk(0, 4);
+            }
+        }
+
+        if (target.DistanceTo(this) < target.width)
+        {
+            if (GetState() == State.WAITING) {
+                return;
+            }
+            if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN) {
+                if (GetState() == State.FIGHTING) {
+                    EnemyHit();
+                }
+            }
+        }
+
+        if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.FIGHTING && GetState() != State.WAITAFTERTHROWN && GetState() != State.DISABLED) {
+            SetState(State.WALKING);
         }
 
         if (GetState() == State.PICKEDUP) {
             oldX = x;
             oldY = y;
-            
             this.rotation = 90;
             this.x = target.x - width;
             this.y = (target.y - target.height) - height / 4;
@@ -90,11 +116,10 @@ public class Enemy : Fighter
                 x -= 20;
                 y += 10;
             }
-            if (y == target.y - height / 4) {
+            if (y > target.y - height / 4) {
                 _health -= 2;
-                SetState(State.WAITING);
+                SetState(State.WAITAFTERTHROWN);
                 disabledAfterThrown = true;
-                // on timer set state to walking
             }
         }
 
@@ -112,7 +137,17 @@ public class Enemy : Fighter
         {
             target.score += SCORE_INCREMENT; // we love magic values yay
             Destroy();
-            enemyDeath.Play();
+            switch (Utils.Random(0, 3)) {
+                case 0:
+                    enemyDeathOne.Play();
+                    break;
+                case 1:
+                    enemyDeathTwo.Play();
+                    break;
+                case 2:
+                    enemyDeathThree.Play();
+                    break;
+            }
         }
 
         //Console.WriteLine(GetState());
@@ -133,7 +168,7 @@ public class Enemy : Fighter
         }
         if (Type == 2)
         { // left
-            targetPos = target.x - 72;
+            targetPos = target.x - 80;
         }
     }
 
@@ -146,18 +181,6 @@ public class Enemy : Fighter
         if (x < target.x && GetState() == State.WALKING)           //Enemy is on the left
         {
             scaleX = -1.0f;
-        }
-    }
-
-    private void WaitingStateBehaviour()                // This will handle how enemies in the WAITING state will walk randomly about, posing no threat
-    {
-        time++;
-        if (GetState() == State.WAITING && time > 500)
-        {
-            SetState(State.WALKING);
-            Walk(Utils.Random(-40, 40), Utils.Random(-40, -40));
-            time = 0;
-            SetState(State.WAITING);
         }
     }
 }

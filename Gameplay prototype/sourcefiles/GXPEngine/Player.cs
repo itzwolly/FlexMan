@@ -18,12 +18,7 @@ public class Player : Fighter
     int hitCount = 0;
     int hitDelayTimer = 0;
     public int direction = 1; // 0 = left, 1 = right
-
-    public bool GetInvincible {
-        get {
-            return _invincible;
-        }
-    }
+    Sound playerDeath;
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
@@ -33,10 +28,11 @@ public class Player : Fighter
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
         Name = "Flexman";
-        _health = 30;
+        _health = 1000000;
         _maxHealth = _health;
         Stamina = 100;
         _maxStamina = Stamina;
+        playerDeath = new Sound("assets\\sfx\\player_dead.wav", false, false);
     }
 
     void Update()
@@ -45,12 +41,15 @@ public class Player : Fighter
 
         oldX = x;
         oldY = y; 
+
         if (Input.GetKey(leftKey)) {
             direction = 0;
             SetState(Fighter.State.WALKING);
             if (!hasPickedUp) {
+                comboAttackCount = 0;
                 Walk(-5, 0);
             } else {
+                comboAttackCount = 0;
                 Walk(-1, 0);
             }
             
@@ -59,8 +58,10 @@ public class Player : Fighter
             SetState(Fighter.State.WALKING);
             direction = 1;
             if (!hasPickedUp) {
+                comboAttackCount = 0;
                 Walk(5, 0);
             } else {
+                comboAttackCount = 0;
                 Walk(1, 0);
             }
         }
@@ -87,6 +88,7 @@ public class Player : Fighter
         if (Input.GetKeyDown(hitKey)) {
              //some form of delay
             if (!hasPickedUp && allowedToHit) {
+                comboAttackCount++;
                 hitCount++;
                 if (hitCount == 3) {
                     allowedToHit = false;
@@ -96,11 +98,11 @@ public class Player : Fighter
             }
             //Hit();
         }
-
+        Console.WriteLine(comboAttackCount);
          //some form of delay PART 2: the DELAYING
         if (!allowedToHit) {
             hitDelayTimer++;
-            if (hitDelayTimer == 50) {
+            if (hitDelayTimer == 35) {
                 allowedToHit = true;
                 hitDelayTimer = 0;
             }
@@ -110,14 +112,14 @@ public class Player : Fighter
             if (!hasPickedUp) {
                 PickUpObject();
             } else {
-                GetPickedUpEnemy().SetState(State.THROWN);
+                GetPickedUpEnemy().SetState(State.THROWN); // enemy state, delay is inside.
                 hasPickedUp = false;
-                SetState(Fighter.State.WALKING);
+                SetState(Fighter.State.WALKING); // player state
             }
-            
         }
         if (_health <= 0) {
             Destroy();
+            playerDeath.Play();
         }
     }
 }

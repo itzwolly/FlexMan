@@ -13,7 +13,9 @@ public class Level : GameObject
     EnemyManager _em;
     Background background, background2;
     List<Fighter> fighterListOrder = new List<Fighter>();
-    
+    Sound bgMusicSound, levelCompleteMusic;
+    SoundChannel playMusic;
+    bool startedPlaying = true;
 
     //initialize game here
     public Level (MyGame pMyGame)
@@ -32,8 +34,11 @@ public class Level : GameObject
 
         background2.x = background.width;
 
-        Sound bgmusic = new Sound("battle_theme.mp3", true, true);
-        bgmusic.Play();
+        bgMusicSound = new Sound("assets\\sfx\\level.wav", true, true);
+        levelCompleteMusic = new Sound("assets\\sfx\\level_complete.wav", false, false);
+        playMusic = bgMusicSound.Play();
+        
+        
 
         _em = new EnemyManager(player1);
         _em.createEnemies();
@@ -49,6 +54,8 @@ public class Level : GameObject
         SetBoundaries();
         PlayerCamera();
         HandleCamera();
+        StopBackgroundMusic();
+        LevelComplete();
 
         fighterListOrder.Sort((player1, enemy) => player1.y.CompareTo(enemy.y));
         foreach (Fighter obj in fighterListOrder) {
@@ -56,6 +63,21 @@ public class Level : GameObject
         }
     }
 
+    private void LevelComplete() {
+        if (_em._listOfEnemies.Count() == 0) {
+            playMusic.Stop();
+            if (startedPlaying == true) {
+                levelCompleteMusic.Play();
+                startedPlaying = false;
+            }
+           
+        }
+    }
+    private void StopBackgroundMusic() {
+        if (player1.IsDestroyed()) {
+            playMusic.Stop();
+        }
+    }
     public void PlayerCamera()
     {
         x = game.width / 2 - player1.x;

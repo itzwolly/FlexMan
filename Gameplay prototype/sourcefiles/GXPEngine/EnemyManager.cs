@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 public class EnemyManager : GameObject
 {
-    List<Enemy> _listOfEnemies = new List<Enemy>();
+    public List<Enemy> _listOfEnemies = new List<Enemy>();
     ObservableCollection<Enemy> _dynamicEnemyList;
     Enemy enemy;
     Player _player;
@@ -20,7 +20,7 @@ public class EnemyManager : GameObject
     public void createEnemies() {
         _dynamicEnemyList = new ObservableCollection<Enemy>();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 3; i++) {
             enemy = new Enemy("red.png", 8, 1, _player);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);
@@ -55,15 +55,6 @@ public class EnemyManager : GameObject
         }
     }
 
-    public Enemy GetEnemyHitByPlayer() { // base for new functionality, doesnt work yet!
-        foreach (Enemy enem in _listOfEnemies) {
-            if (enem.IsEnemyHitByPlayer) {
-                return enem;
-            }
-        }
-        return null;
-    }
-
     void Update() {
         try {
             if (_listOfEnemies[0].IsDestroyed()) { // if enemy dies
@@ -92,10 +83,6 @@ public class EnemyManager : GameObject
             }
         } catch {
             // empty, dont kill us pls
-        }
-
-        if (enemy.GetState() == Fighter.State.FIGHTING) {
-            enemy.SetState(Fighter.State.WAITING);
         }
     }
 
