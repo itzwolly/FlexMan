@@ -17,7 +17,6 @@ D:\Saxion\Arcade\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Deb
 D:\Saxion\Arcade\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.pdb
 D:\Saxion\Arcade\Repository\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.exe
 D:\Saxion\Arcade\Repository\Gameplay prototype\sourcefiles\GXPEngine\bin\Debug\GXPEngine.pdb
-D:\Saxion\Arcade\Repository\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.csprojResolveAssemblyReference.cache
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.exe
 C:\Users\Liam\Documents\arcadegames\Gameplay prototype\sourcefiles\GXPEngine\obj\x86\Debug\GXPEngine.pdb

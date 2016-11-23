@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using GXPEngine;
 using System.Collections.Specialized;
+using System.Drawing.Text;
 
 
 public class HUD : Sprite
@@ -17,6 +18,8 @@ public class HUD : Sprite
     Canvas _pointsToAddInfo;
 
     Font _font;
+    PrivateFontCollection _pfc = new PrivateFontCollection();
+
     Player _player;
     Level _level;
     Brush _healthBrushColor;
@@ -40,7 +43,11 @@ public class HUD : Sprite
         _pointsToAddInfo.x = 0;
         _pointsToAddInfo.y = 0;
 
-        _font = new Font(FontFamily.GenericSansSerif, 24);
+        
+        _pfc.AddFontFile("assets\\font\\zig_____.ttf");
+        _font = new Font(_pfc.Families[0], 24);
+
+        //_font = new Font(FontFamily.GenericSansSerif, 24);
     }
 
     private void ClearPointsToAddHUD() {
@@ -50,7 +57,7 @@ public class HUD : Sprite
     private void Enemy_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         // The moment an enemy dies, he gets added to a list
         if (e.Action == NotifyCollectionChangedAction.Add) {
-            _pointsToAddInfo.graphics.DrawString("+" + Enemy.SCORE_INCREMENT, _font, Brushes.Green, 861, -2);
+            _pointsToAddInfo.graphics.DrawString("+" + Enemy.SCORE_INCREMENT, _font, Brushes.Green, 845, -2);
             new Timer(1000, ClearPointsToAddHUD);
         }
         return;
@@ -104,21 +111,19 @@ public class HUD : Sprite
         {
             _playerInfo.graphics.Clear(Color.Transparent); // clear hud
             /* Name */
-            _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 120, 25); // name
+            _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 117, 25); // name
             /* Score */
-            _playerInfo.graphics.DrawString(_player.Score.ToString("D8"), _font, Brushes.DarkOrange, 790, 25); // score
-            _playerInfo.graphics.DrawString("PTS", _font, Brushes.White, 946, 25); // score texts
+            _playerInfo.graphics.DrawString(_player.Score.ToString("D8"), _font, Brushes.DarkOrange, 710, 25); // score
+            _playerInfo.graphics.DrawString("PTS", _font, Brushes.White, 930, 25); // score texts
             /* Health */
-            _playerInfo.graphics.DrawString("HP", _font, Brushes.White, 120, 75); // hp text in front of hp bar
+            _playerInfo.graphics.DrawString("HP", _font, Brushes.White, 117, 80); // hp text in front of hp bar
             _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 180, 81, HEALTH_BAR_OUTLINE_WIDTH, 23); // hp bar outline
             _playerInfo.graphics.FillRectangle(GetHealthBrushColor(), 181, 82, GetHealthBarWidth(), 22); // hp bar itself
             /* Stamina */
-            _playerInfo.graphics.DrawString("STM", _font, Brushes.White, 560, 75); // stamina text in front of stamina bar
+            _playerInfo.graphics.DrawString("STM", _font, Brushes.White, 553, 80); // stamina text in front of stamina bar
             _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 645, 81, STAMINA_BAR_OUTLINE_WIDTH, 23); // stamina bar outline
             _playerInfo.graphics.FillRectangle((_player.HasEnoughStamina() ? Brushes.RoyalBlue : Brushes.Red), 646, 82, GetStaminaBarWidth(), 22); // stamina bar itself
 
-           
-            
             // DEBUG
             //_playerInfo.graphics.DrawString(_player.GetHealth() + " - " + _player.GetMaxHealth(), _font, Brushes.White, 800, 74);
         } catch {

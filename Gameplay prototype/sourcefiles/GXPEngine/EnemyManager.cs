@@ -93,10 +93,6 @@ public class EnemyManager : GameObject
         } catch {
             // empty, dont kill us pls
         }
-
-        if (enemy.GetState() == Fighter.State.FIGHTING) {
-            enemy.SetState(Fighter.State.WAITING);
-        }
     }
 
     public Enemy GetEnemy() {

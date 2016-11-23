@@ -38,11 +38,12 @@ public class Enemy : Fighter
         MirrorToPlayer();
         ChooseFightingSide();
         //WaitingStateBehaviour();
-
+        
         if (GetState() == State.WALKING) {
             rotation = 0;
             if (x > targetPos + 2)
             {             // Player is on the left side
+
                 Walk(-4, 0);
 
             }
@@ -62,21 +63,16 @@ public class Enemy : Fighter
                 }
             }
         }
-        if (target.DistanceTo(this) < target.width && GetState() == State.WALKING)
+
+        if (target.DistanceTo(this) < target.width /*&& GetState() == State.WALKING*/)
         {
             SetState(State.FIGHTING);
             EnemyHit();
-
-            //if (GetState() == State.FIGHTING)
-            //{
-            //    new Timer(850, Hit); // TODO: fix delay
-            //}
         }
 
         if (GetState() == State.PICKEDUP) {
             oldX = x;
             oldY = y;
-            
             this.rotation = 90;
             this.x = target.x - width;
             this.y = (target.y - target.height) - height / 4;

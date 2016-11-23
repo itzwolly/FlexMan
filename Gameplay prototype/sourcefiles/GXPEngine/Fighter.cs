@@ -25,7 +25,7 @@ public class Fighter : Pausable
     Sound hitSound;
     bool _enemyHitByPlayer = false; // base for new functionality, doesnt work yet!
     int enemyHitTimer = 0; // base for new functionality, doesnt work yet!
-    int enemyHitCountTimer = 0;
+    public int enemyHitCountTimer = 0;
     Enemy _pickedUpEnemy;
     int _stamina;
     public int _maxStamina;
@@ -244,6 +244,7 @@ public class Fighter : Pausable
             {
                 currentFrame = 0;
             }
+            
         }
     }
 
@@ -263,6 +264,7 @@ public class Fighter : Pausable
         isHitting = false;
         hand.visible = false;
         attackOnce = false;
+        SetState(State.WALKING);
     }
 
     private void EndPickUp() {
@@ -289,42 +291,35 @@ public class Fighter : Pausable
     }
 
     protected void EnemyHit() {
-        if (GetState() == State.WALKING) {
-            SetState(State.FIGHTING);
-        }
+        //if (GetState() == State.WALKING) {
+        //    SetState(State.FIGHTING);
+        //}
         if (GetState() == State.PICKEDUP) {
             return;
         }
 
-        if (isFirstTimeAttacking) {
-            enemyHitCountTimer = 85;
-            isFirstTimeAttacking = false;
-        } else {
-            enemyHitCountTimer++;
-        }
-        
+        enemyHitCountTimer++;
         if (isHitting == false && GetState() == State.FIGHTING && enemyHitCountTimer == 85) {
             enemyHitCountTimer = 0;
             isHitting = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;
             currentFrame = 6;
-        }
-        SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
+        } 
     }
 
-    protected void HandleGenericGuyHit() {
-        if (GetState() == State.WALKING) {
-            SetState(State.FIGHTING);
-        }
-        if (isHitting == false && GetState() == State.FIGHTING) {
-            isHitting = true;
-            hand.visible = true;
-            hitTimer = HIT_DURATION;
-            currentFrame = 6;
-        }
-        SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
-    }
+    //protected void HandleGenericGuyHit() {
+    //    if (GetState() == State.WALKING) {
+    //        SetState(State.FIGHTING);
+    //    }
+    //    if (isHitting == false && GetState() == State.FIGHTING) {
+    //        isHitting = true;
+    //        hand.visible = true;
+    //        hitTimer = HIT_DURATION;
+    //        currentFrame = 6;
+    //    }
+    //    SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
+    //}
 
     protected void PickUpObject() {
         if (GetState() == State.WALKING) {
