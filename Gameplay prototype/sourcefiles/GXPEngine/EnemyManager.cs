@@ -105,6 +105,6 @@ public class EnemyManager : GameObject
     }
 
     public ObservableCollection<Enemy> GetDeadEnemyList() {
-        return _dynamicEnemyList;
+        return _dynamicEnemyList; // dead enemy list
     }
 }
