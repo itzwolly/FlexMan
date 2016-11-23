@@ -18,6 +18,7 @@ public class Enemy : Fighter
     Sound enemyDeathOne, enemyDeathTwo, enemyDeathThree;
     public int gotHitAmount = 0;
     int direction = 0;
+    Sound throwOne, throwTwo;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -25,10 +26,13 @@ public class Enemy : Fighter
         : base(spriteName, col, row)
     {
         this.target = target;
-        _health = 4;
+        _health = 999;
         enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
         enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
         enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
+
+        throwOne = new Sound("assets\\sfx\\throw1.wav", false, false);
+        throwTwo = new Sound("assets\\sfx\\throw2.wav", false, false);
     }
 
     void Update()
@@ -109,6 +113,15 @@ public class Enemy : Fighter
         }
 
         if (GetState() == Fighter.State.THROWN) {
+            switch (Utils.Random(0, 2)) {
+                case 0:
+                    throwOne.Play();
+                    break;
+                case 1:
+                    throwTwo.Play();
+                    break;
+            }
+            
             if (direction == 1) { // right
                 x += 20;
                 y += 10;

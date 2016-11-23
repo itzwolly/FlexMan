@@ -5,13 +5,10 @@ using System.Timers;
 
 public class Background : Sprite 
 {
-    Sprite ground;
+    Canvas _groundHitBox;
 
-    public Background() : base("background.png")
+    public Background() : base("assets\\bg\\ground.png")
     {
-        ground = new Sprite("Ground.png");
-        AddChildAt(ground, 0);
-        ground.y += height;
 
     }
 }

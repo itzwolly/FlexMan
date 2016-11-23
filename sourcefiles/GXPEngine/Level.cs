@@ -11,7 +11,7 @@ public class Level : GameObject
     MyGame _myGame;
     Player player1;
     EnemyManager _em;
-    Background background, background2;
+    Background background;
     List<Fighter> fighterListOrder = new List<Fighter>();
     Sound bgMusicSound, levelCompleteMusic;
     SoundChannel playMusic;
@@ -27,18 +27,13 @@ public class Level : GameObject
         player1.SetXY(100, 600);
 
         background = new Background();
-        background2 = new Background();
 
         AddChildAt(background, 0);
-        AddChildAt(background2, 0);
 
-        background2.x = background.width;
 
         bgMusicSound = new Sound("assets\\sfx\\level.wav", true, true);
         levelCompleteMusic = new Sound("assets\\sfx\\level_complete.wav", false, false);
         playMusic = bgMusicSound.Play();
-        
-        
 
         _em = new EnemyManager(player1);
         _em.createEnemies();
@@ -51,15 +46,34 @@ public class Level : GameObject
 
     //update level here
     void Update() {
-        SetBoundaries();
+        //SetBoundaries();
         PlayerCamera();
-        HandleCamera();
+        //HandleCamera();
+
         StopBackgroundMusic();
         LevelComplete();
 
         fighterListOrder.Sort((player1, enemy) => player1.y.CompareTo(enemy.y));
         foreach (Fighter obj in fighterListOrder) {
             AddChild(obj);
+        }
+
+        HandleBoundaries();
+    }
+
+    private void HandleBoundaries() {
+        if (player1.y < 380) { // will change later, just checking where i want it
+            player1.y = player1.oldY;
+        }
+        if (player1.y > background.height) {
+            player1.y = player1.oldY;
+        }
+
+        if (player1.x - (player1.width / 4) < 0) {
+            player1.x = 20; // dont ask
+        }
+        if (player1.x + (player1.width / 4) > background.width - player1.width) {
+            player1.x = background.width - player1.width;
         }
     }
 
@@ -86,9 +100,8 @@ public class Level : GameObject
         {
             x = 0;
         }
-        if (x < -(_myGame.width - player1.width))
-        {
-            x = -(_myGame.width);
+        if (x < -((_myGame.width * 5) - (_myGame.width / 6))) {
+            x = -((_myGame.width * 5) - (_myGame.width / 6));
         }
     }
 
@@ -101,39 +114,12 @@ public class Level : GameObject
             // then remove the previous background and load it after the new one.
             if (!(background.x == -game.width)) {
                 background.x -= 8;
-                background2.x -= 8;
                 player1.visible = false;
             } else {
                 player1.x = player1.width;
                 player1.visible = true;
                 Pausable.UnPause();
             }
-        }
-    }
-
-    public void SetBoundaries()
-    {
-        if (player1.y > _myGame.height - 127)
-        {
-            player1.y = _myGame.height - 127;
-        }
-
-        if (player1.y < background.height + 43)
-        {
-            player1.y = background.height + 39;
-        }
-
-        if (player1.x - (player1.width / 2) < 0) {
-            player1.x = player1.width - (player1.width / 2);
-        }
-
-        if (player1.x > _myGame.width + (_myGame.width) - (player1.width / 4)) {
-            player1.x = _myGame.width + (_myGame.width) - (player1.width / 4);
-        }
-
-        if (player1.x < 0 + (player1.width / 4))
-        {
-            player1.x = 0 + (player1.width / 4);
         }
     }
 

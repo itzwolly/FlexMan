@@ -24,7 +24,7 @@ public class HUD : Sprite
     int _staminaBarWidth;
 
 
-    public HUD(Level pLevel, Player pPlayer) : base("HUD.png") {
+    public HUD(Level pLevel, Player pPlayer) : base("HUD-final.png") {
         _player = pPlayer;
         _level = pLevel;
 
@@ -56,16 +56,32 @@ public class HUD : Sprite
         return;
     }
 
+    private void SetFlexManImage() {
+        if (_healthBrushColor == Brushes.Green) {
+            _playerInfo.graphics.DrawImage(Image.FromFile("assets\\faces\\face1.png"), 15, 15, 100, 100);
+        } else if (_healthBrushColor == Brushes.OrangeRed) {
+            _playerInfo.graphics.DrawImage(Image.FromFile("assets\\faces\\face2.png"), 15, 15, 100, 100);
+        } else if (_healthBrushColor == Brushes.Red) {
+            _playerInfo.graphics.DrawImage(Image.FromFile("assets\\faces\\face3.png"), 15, 15, 100, 100);
+        }
+    }
+
     private Brush GetHealthBrushColor() {
         // more than 75% and lower or equal than 100%;
         if (_player.GetHealth() > (Mathf.Ceiling(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 75)) && _player.GetHealth() <= _player.GetMaxHealth()) { 
             _healthBrushColor = Brushes.Green;
+            
+
             // more or equal than 25% and less than 75%
         } else if (_player.GetHealth() > (Mathf.Ceiling(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 25)) && _player.GetHealth() <= (Mathf.Floor(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 75))) { 
             _healthBrushColor = Brushes.OrangeRed;
+            _playerInfo.graphics.DrawImage(Image.FromFile("assets\\faces\\face2.png"), 15, 15, 100, 100);
+
             // more or equal than 0% and less than 25%
         } else if (_player.GetHealth() >= (Convert.ToSingle(_player.GetMaxHealth()) - _player.GetMaxHealth()) && _player.GetHealth() <= (Mathf.Floor(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 25))) {
             _healthBrushColor = Brushes.Red;
+            _playerInfo.graphics.DrawImage(Image.FromFile("assets\\faces\\face3.png"), 15, 15, 100, 100);
+
         }
         return _healthBrushColor;
     }
@@ -103,6 +119,8 @@ public class HUD : Sprite
         try
         {
             _playerInfo.graphics.Clear(Color.Transparent); // clear hud
+            /* FlexMan Face */
+            SetFlexManImage();
             /* Name */
             _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 120, 25); // name
             /* Score */
@@ -117,8 +135,6 @@ public class HUD : Sprite
             _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 645, 81, STAMINA_BAR_OUTLINE_WIDTH, 23); // stamina bar outline
             _playerInfo.graphics.FillRectangle((_player.HasEnoughStamina() ? Brushes.RoyalBlue : Brushes.Red), 646, 82, GetStaminaBarWidth(), 22); // stamina bar itself
 
-           
-            
             // DEBUG
             //_playerInfo.graphics.DrawString(_player.GetHealth() + " - " + _player.GetMaxHealth(), _font, Brushes.White, 800, 74);
         } catch {

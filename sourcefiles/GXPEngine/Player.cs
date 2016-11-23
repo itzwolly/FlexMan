@@ -28,7 +28,7 @@ public class Player : Fighter
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
         Name = "Flexman";
-        _health = 1000000;
+        _health = 30;
         _maxHealth = _health;
         Stamina = 100;
         _maxStamina = Stamina;
@@ -40,8 +40,7 @@ public class Player : Fighter
         base.Update();
 
         oldX = x;
-        oldY = y; 
-
+        oldY = y;
         if (Input.GetKey(leftKey)) {
             direction = 0;
             SetState(Fighter.State.WALKING);
@@ -98,7 +97,6 @@ public class Player : Fighter
             }
             //Hit();
         }
-        Console.WriteLine(comboAttackCount);
          //some form of delay PART 2: the DELAYING
         if (!allowedToHit) {
             hitDelayTimer++;
