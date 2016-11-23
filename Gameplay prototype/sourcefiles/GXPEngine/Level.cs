@@ -12,6 +12,7 @@ public class Level : GameObject
     Player player1;
     EnemyManager _em;
     Background background, background2;
+    int randomNumber;
     List<Fighter> fighterListOrder = new List<Fighter>();
     
 
@@ -20,7 +21,7 @@ public class Level : GameObject
     {
         _myGame = pMyGame;
 
-        player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
+        player1 = new Player("assets\\blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
         AddChildAt(player1, 1);
         player1.SetXY(100, 600);
 
@@ -32,7 +33,7 @@ public class Level : GameObject
 
         background2.x = background.width;
 
-        Sound bgmusic = new Sound("battle_theme.mp3", true, true);
+        Sound bgmusic = new Sound("sfx\\level.wav", true, true);
         bgmusic.Play();
 
         _em = new EnemyManager(player1);
@@ -53,6 +54,25 @@ public class Level : GameObject
         fighterListOrder.Sort((player1, enemy) => player1.y.CompareTo(enemy.y));
         foreach (Fighter obj in fighterListOrder) {
             AddChild(obj);
+            if (obj is Enemy)
+            {
+                randomNumber = Utils.Random(0, 8);
+                if (obj.IsDestroyed())
+                {
+                    if (randomNumber != 7)             // 1 in 8 chance to spawn a health item on enemy death
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Item healthItem = new Item();
+                        AddChild(healthItem);
+                        healthItem.x = obj.x;
+                        healthItem.y = obj.y - 48;
+                        healthItem.scale = 0.5f;
+                    }
+                }
+            }
         }
     }
 
