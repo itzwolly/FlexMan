@@ -4,7 +4,7 @@ using GXPEngine;
 using System.Timers;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Collections.Specialized;
 
 public class Level : GameObject 
 {
@@ -16,6 +16,9 @@ public class Level : GameObject
     Sound bgMusicSound, levelCompleteMusic;
     SoundChannel playMusic;
     bool startedPlaying = true;
+    Item healthItem;
+    int _randomNumber;
+
 
     //initialize game here
     public Level (MyGame pMyGame)
@@ -37,6 +40,8 @@ public class Level : GameObject
 
         _em = new EnemyManager(player1);
         _em.createEnemies();
+
+        _em.GetDeadEnemyList().CollectionChanged += Level_CollectionChanged;
 
         fighterListOrder.Add(player1);
         foreach (Fighter fighter in _em.GetAllEnemies()) {
@@ -119,6 +124,25 @@ public class Level : GameObject
                 player1.x = player1.width;
                 player1.visible = true;
                 Pausable.UnPause();
+            }
+        }
+    }
+
+    private void Level_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Add)
+        {
+            healthItem = new Item();
+            healthItem.scale = 0.5f;
+            healthItem.SetOrigin(healthItem.width / 2, healthItem.height / 2);
+            healthItem.x = (e.NewItems[0] as Enemy).x;
+            healthItem.y = (e.NewItems[0] as Enemy).y - 200;
+
+            _randomNumber = Utils.Random(0, 8);
+            Console.WriteLine(_randomNumber);
+            if (_randomNumber == 7)
+            {
+                AddChildAt(healthItem, 20);
             }
         }
     }

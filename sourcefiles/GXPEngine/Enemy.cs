@@ -26,7 +26,7 @@ public class Enemy : Fighter
         : base(spriteName, col, row)
     {
         this.target = target;
-        _health = 999;
+        _health = 4;
         enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
         enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
         enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
