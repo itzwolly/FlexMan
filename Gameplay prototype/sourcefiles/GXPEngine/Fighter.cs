@@ -8,12 +8,13 @@ using System.Drawing;
 public class Fighter : Pausable
 {
     const int HIT_DURATION = 25;
+
     Sprite hand;
     int hitTimer = 0;
     int staminaTimer = 0;
     bool isHitting = false;
     bool isPickedUp = false;
-    public int score;
+    public int score = 0;
     public int _health = 0;
     public int _maxHealth = 0;
     private State _state;
@@ -27,6 +28,7 @@ public class Fighter : Pausable
     int enemyHitCountTimer = 0;
     Enemy _pickedUpEnemy;
     int _stamina;
+    public int _maxStamina;
     bool attackOnce = false;
     public float oldX, oldY;
     int disabledTimer = 0;
@@ -45,6 +47,15 @@ public class Fighter : Pausable
     public string Name { get { return charName; } set { charName = value; } }
     public bool IsEnemyHitByPlayer { get { return _enemyHitByPlayer; } set { _enemyHitByPlayer = value; } }
     public int Stamina { get { return (_stamina < 100 ? _stamina : 100); } set { _stamina = value; } }
+    public int Score {
+        get {
+            return score;
+        }
+        set {
+            //oldScore = score; // removed cuz doesnt do what i want
+            score = value;
+        }
+    }
 
     public Fighter(string spriteName, int col, int row) : base(spriteName, col, row) {
         Mirror(true, false);
@@ -345,10 +356,6 @@ public class Fighter : Pausable
         return _collisionHitBox;
     }
 
-    public int GetScore() {
-        return score;
-    }
-
     public int GetHealth()
     {
         return (_health < 0 ) ? 0 : _health;
@@ -356,5 +363,13 @@ public class Fighter : Pausable
 
     public int GetMaxHealth() {
         return _maxHealth;
+    }
+
+    public int GetStamina() {
+        return (_stamina < 100 ? _stamina : 100);
+    }
+
+    public int GetMaxStamina() {
+        return _maxStamina;
     }
 }

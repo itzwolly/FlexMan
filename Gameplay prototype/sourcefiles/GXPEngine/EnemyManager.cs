@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GXPEngine;
+using System.Collections.ObjectModel;
 
 public class EnemyManager : GameObject
 {
     List<Enemy> _listOfEnemies = new List<Enemy>();
+    ObservableCollection<Enemy> _dynamicEnemyList;
     Enemy enemy;
     Player _player;
     int[] enemyPosition = new int[] { 0, 0 };
@@ -16,6 +18,8 @@ public class EnemyManager : GameObject
     }
 
     public void createEnemies() {
+        _dynamicEnemyList = new ObservableCollection<Enemy>();
+
         for (int i = 0; i < 8; i++) {
             enemy = new Enemy("red.png", 8, 1, _player);
             game.AddChild(enemy);
@@ -63,6 +67,7 @@ public class EnemyManager : GameObject
     void Update() {
         try {
             if (_listOfEnemies[0].IsDestroyed()) { // if enemy dies
+                _dynamicEnemyList.Add(_listOfEnemies[0]);
                 if (_listOfEnemies[0].Type == 1) { // and is right side
                     enemyPosition[0] = 0; // set right side to empty
                     _listOfEnemies.RemoveAt(0); // remove enemy from list
@@ -74,6 +79,7 @@ public class EnemyManager : GameObject
                 } 
                 
             } else if (_listOfEnemies[1].IsDestroyed()) {
+                _dynamicEnemyList.Add(_listOfEnemies[1]);
                 if (_listOfEnemies[1].Type == 1) {
                     enemyPosition[0] = 0;
                     _listOfEnemies.RemoveAt(1);
@@ -102,5 +108,7 @@ public class EnemyManager : GameObject
         return _listOfEnemies;
     }
 
-    
+    public ObservableCollection<Enemy> GetDeadEnemyList() {
+        return _dynamicEnemyList;
+    }
 }

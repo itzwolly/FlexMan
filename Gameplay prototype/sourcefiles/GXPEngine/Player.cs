@@ -32,10 +32,11 @@ public class Player : Fighter
         this.upKey = upKey;
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
-        Name = "Teddy";
+        Name = "Flexman";
         _health = 30;
         _maxHealth = _health;
         Stamina = 100;
+        _maxStamina = Stamina;
     }
 
     void Update()

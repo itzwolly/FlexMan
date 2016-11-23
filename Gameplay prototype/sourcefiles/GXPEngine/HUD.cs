@@ -2,66 +2,126 @@
 using System.Collections.Generic;
 using System.Drawing;
 using GXPEngine;
+using System.Collections.Specialized;
 
 
 public class HUD : Sprite
 {
+    const int HEALTH_BAR_WIDTH = 365;
+    const int HEALTH_BAR_OUTLINE_WIDTH = HEALTH_BAR_WIDTH + 1;
+    const int STAMINA_BAR_WIDTH = 365;
+    const int STAMINA_BAR_OUTLINE_WIDTH = STAMINA_BAR_WIDTH + 1;
+
+
     Canvas _playerInfo;
-    Canvas _enemyInfo;
+    Canvas _pointsToAddInfo;
+
     Font _font;
-
     Player _player;
-    Enemy _enemy;
+    Level _level;
+    Brush _healthBrushColor;
+    int _healthBarWidth;
+    int _staminaBarWidth;
 
-    public HUD(Player pPlayer) : base("HUD.png") {
+
+    public HUD(Level pLevel, Player pPlayer) : base("HUD.png") {
         _player = pPlayer;
+        _level = pLevel;
 
-        _playerInfo = new Canvas((game.width / 2), 128);
+        _level.GetEnemyManager().GetDeadEnemyList().CollectionChanged += Enemy_CollectionChanged;
+        
+        _playerInfo = new Canvas(game.width, 128);
         SetChildIndex(_playerInfo, 1);
         _playerInfo.x = 0;
         _playerInfo.y = 0;
 
-        _font = new Font(FontFamily.GenericSansSerif, 14);
+        _pointsToAddInfo = new Canvas(game.width, 128);
+        SetChildIndex(_pointsToAddInfo, 1);
+        _pointsToAddInfo.x = 0;
+        _pointsToAddInfo.y = 0;
+
+        _font = new Font(FontFamily.GenericSansSerif, 24);
     }
 
-    public HUD(Player pPlayer, Enemy pEnemy) : base("HUD.png") // base for new functionality, doesnt work yet!
-    {
-        _player = pPlayer;
-        _enemy = pEnemy;
+    private void ClearPointsToAddHUD() {
+        _pointsToAddInfo.graphics.Clear(Color.Transparent);
+    }
 
-        _playerInfo = new Canvas((game.width / 2), 128);
-        SetChildIndex(_playerInfo, 1);
-        _playerInfo.x = 0;
-        _playerInfo.y = 0;
+    private void Enemy_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        // The moment an enemy dies, he gets added to a list
+        if (e.Action == NotifyCollectionChangedAction.Add) {
+            _pointsToAddInfo.graphics.DrawString("+" + Enemy.SCORE_INCREMENT, _font, Brushes.Green, 861, -2);
+            new Timer(1000, ClearPointsToAddHUD);
+        }
+        return;
+    }
 
-        _enemyInfo = new Canvas((game.width / 2), 128);
-        SetChildIndex(_enemyInfo, 1);
-        _enemyInfo.x = game.width / 2;
-        _enemyInfo.y = 0;
+    private Brush GetHealthBrushColor() {
+        // more than 75% and lower or equal than 100%;
+        if (_player.GetHealth() > (Mathf.Ceiling(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 75)) && _player.GetHealth() <= _player.GetMaxHealth()) { 
+            _healthBrushColor = Brushes.Green;
+            // more or equal than 25% and less than 75%
+        } else if (_player.GetHealth() > (Mathf.Ceiling(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 25)) && _player.GetHealth() <= (Mathf.Floor(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 75))) { 
+            _healthBrushColor = Brushes.OrangeRed;
+            // more or equal than 0% and less than 25%
+        } else if (_player.GetHealth() >= (Convert.ToSingle(_player.GetMaxHealth()) - _player.GetMaxHealth()) && _player.GetHealth() <= (Mathf.Floor(Convert.ToSingle(_player.GetMaxHealth()) / 100 * 25))) {
+            _healthBrushColor = Brushes.Red;
+        }
+        return _healthBrushColor;
+    }
 
-        _font = new Font(FontFamily.GenericSansSerif, 14);
+    private int GetHealthBarWidth() {
+        if (_player.GetMaxHealth() - _player.GetHealth() == 0) { // full hp
+            _healthBarWidth = HEALTH_BAR_WIDTH; // full size of the bar
+        } else if (_player.GetMaxHealth() - _player.GetHealth() == _player.GetMaxHealth()) { // dead
+            _healthBarWidth = 0;
+        } else {
+            // what is the percentage of your current hp, compared to your max hp
+            float _singlePoint = Mathf.Round((float)_player.GetHealth() / _player.GetMaxHealth() * 100);
+            // get new width
+            _healthBarWidth = Mathf.Round((float)HEALTH_BAR_WIDTH / 100 * _singlePoint);
+        }
+        return _healthBarWidth;
+    }
+
+    private int GetStaminaBarWidth() {
+        if (_player.GetMaxStamina() - _player.GetStamina() == 0) { // full stamina
+            _staminaBarWidth = STAMINA_BAR_WIDTH; // full size of the bar
+        } else if (_player.GetMaxStamina() - _player.GetStamina() == _player.GetMaxStamina()) { // out of stamina
+            _staminaBarWidth = 0;
+        } else {
+            // what is the percentage of your current stamina, compared to your max stamina
+            float _singlePoint = Mathf.Round((float)_player.GetStamina() / _player.GetMaxStamina() * 100);
+            // get new stamina
+            _staminaBarWidth = Mathf.Round((float)STAMINA_BAR_WIDTH / 100 * _singlePoint);
+        }
+        return _staminaBarWidth;
     }
 
     void Update()
     {
         try
         {
-            _playerInfo.graphics.Clear(Color.Transparent);
-            _playerInfo.graphics.DrawString(_player.Name, _font, Brushes.White, 225, 50);
-            _playerInfo.graphics.DrawString(_player.GetHealth().ToString(), _font, Brushes.White, 225, 80);
-            _playerInfo.graphics.DrawString(" HP", _font, (_player.GetHealth() < Mathf.Floor(_player.GetMaxHealth() / 2)) ? Brushes.Red : Brushes.Green, 250, 80);
-            _playerInfo.graphics.DrawString(_player.GetScore().ToString(), _font, Brushes.White, 375, 50);
-            _playerInfo.graphics.DrawString("PTS", _font, Brushes.Orange, 450, 50);
-            _playerInfo.graphics.DrawString(_player.Stamina.ToString(), _font, (_player.HasEnoughStamina() ? Brushes.Green : Brushes.Red), 375, 80);
-            _playerInfo.graphics.DrawString("STM", _font, (_player.HasEnoughStamina() ? Brushes.Green : Brushes.Red), 450, 80);
+            _playerInfo.graphics.Clear(Color.Transparent); // clear hud
+            /* Name */
+            _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 120, 25); // name
+            /* Score */
+            _playerInfo.graphics.DrawString(_player.Score.ToString("D8"), _font, Brushes.DarkOrange, 790, 25); // score
+            _playerInfo.graphics.DrawString("PTS", _font, Brushes.White, 946, 25); // score texts
+            /* Health */
+            _playerInfo.graphics.DrawString("HP", _font, Brushes.White, 120, 75); // hp text in front of hp bar
+            _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 180, 81, HEALTH_BAR_OUTLINE_WIDTH, 23); // hp bar outline
+            _playerInfo.graphics.FillRectangle(GetHealthBrushColor(), 181, 82, GetHealthBarWidth(), 22); // hp bar itself
+            /* Stamina */
+            _playerInfo.graphics.DrawString("STM", _font, Brushes.White, 560, 75); // stamina text in front of stamina bar
+            _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 645, 81, STAMINA_BAR_OUTLINE_WIDTH, 23); // stamina bar outline
+            _playerInfo.graphics.FillRectangle((_player.HasEnoughStamina() ? Brushes.RoyalBlue : Brushes.Red), 646, 82, GetStaminaBarWidth(), 22); // stamina bar itself
 
-            if (_enemyInfo != null) {
-                _enemyInfo.graphics.Clear(Color.Transparent);
-                _enemyInfo.graphics.DrawString(_enemy.GetHealth().ToString(), _font, Brushes.White, 225, 40);
-                _enemyInfo.graphics.DrawString(" HP", _font, (_enemy.GetHealth() < Mathf.Floor(_enemy.GetMaxHealth() / 2)) ? Brushes.Red : Brushes.Green, 250, 80);
-            }
+           
+            
+            // DEBUG
+            //_playerInfo.graphics.DrawString(_player.GetHealth() + " - " + _player.GetMaxHealth(), _font, Brushes.White, 800, 74);
         } catch {
-
             // empty
         }
     }

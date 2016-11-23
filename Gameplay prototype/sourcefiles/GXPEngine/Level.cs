@@ -118,4 +118,8 @@ public class Level : GameObject
     public Player GetPlayer() {
         return player1;
     }
+
+    public EnemyManager GetEnemyManager() {
+        return _em;
+    }
 }
