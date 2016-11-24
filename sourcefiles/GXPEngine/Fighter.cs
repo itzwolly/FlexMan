@@ -22,7 +22,8 @@ public class Fighter : Pausable
     protected bool _invincible = false;
     Canvas _collisionHitBox;
     string charName;
-    Sound hitOne, hitTwo, hitThree;
+    Sound hitOne, hitTwo, hitThree, comboHitOne, comboHitTwo, comboHitThree;
+    SoundChannel comboHit;
     int enemyHitCountTimer = 0;
     Enemy _pickedUpEnemy;
     int _stamina;
@@ -32,6 +33,7 @@ public class Fighter : Pausable
     int disabledTimer = 0;
     int direction = 0;
     public int comboAttackCount = 0;
+    Sound pickUpOne, pickUpTwo;
 
     public enum State {
         WAITING,
@@ -65,6 +67,17 @@ public class Fighter : Pausable
         hitOne = new Sound("assets\\sfx\\hit1.wav", false, false);
         hitTwo = new Sound("assets\\sfx\\hit2.wav", false, false);
         hitThree = new Sound("assets\\sfx\\hit3.wav", false, false);
+
+        comboHitOne = new Sound("assets\\sfx\\combohit1.wav", false, false);
+        comboHitTwo = new Sound("assets\\sfx\\combohit2.wav", false, false);
+        comboHitThree = new Sound("assets\\sfx\\combohit2.wav", false, false);
+
+        
+        
+        
+
+        pickUpOne = new Sound("assets\\sfx\\pick1.wav", false, false);
+        pickUpTwo = new Sound("assets\\sfx\\pick2.wav", false, false);
 
         _collisionHitBox = CreateHitBox();
     }
@@ -160,6 +173,14 @@ public class Fighter : Pausable
                 if (item is Enemy) { 
                     Enemy enem = item as Enemy;
                     if (isPickedUp && (hand.parent as Player).hasPickedUp == false && (hand.parent as Player).HasEnoughStamina()) {
+                        switch (Utils.Random(0, 2)) {
+                            case 0:
+                                pickUpOne.Play();
+                                break;
+                            case 1:
+                                pickUpTwo.Play();
+                                break;
+                        }
                         (hand.parent as Player).hasPickedUp = true;
                         (hand.parent as Player).Stamina -= 50;
                         enem.SetState(State.PICKEDUP);
@@ -187,22 +208,28 @@ public class Fighter : Pausable
                         switch (Utils.Random(0, 2)) {
                             case 0:
                                 hitOne.Play();
+                                comboHit = comboHitOne.Play();
                                 break;
                             case 1:
                                 hitTwo.Play();
+                                comboHit = comboHitTwo.Play();
                                 break;
                         }
                     } else if (comboAttackCount == 2) {
                         switch (Utils.Random(0, 2)) {
                             case 0:
                                 hitOne.Play();
+                                comboHit = comboHitOne.Play();
                                 break;
                             case 1:
                                 hitTwo.Play();
+                                comboHit = comboHitTwo.Play();
                                 break;
                         }
                     } else if (comboAttackCount == 3) {
                         hitThree.Play();
+                        comboHit.Frequency = 10; 
+                        comboHit = comboHitThree.Play();
                     }
 
                     if ((hand.parent as Player).comboAttackCount == 3) {

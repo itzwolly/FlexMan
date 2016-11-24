@@ -11,7 +11,8 @@ public class Level : GameObject
     MyGame _myGame;
     Player player1;
     EnemyManager _em;
-    Background background, background2;
+    Background background;
+    Foreground foreground;
     List<Fighter> fighterListOrder = new List<Fighter>();
     Sound bgMusicSound, levelCompleteMusic;
     SoundChannel playMusic;
@@ -28,16 +29,14 @@ public class Level : GameObject
         rnd = new Random();
 
         player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
-        AddChildAt(player1, 1);
+        AddChildAt(player1, 3);
         player1.SetXY(100, 600);
 
         background = new Background();
-        background2 = new Background();
-
-        AddChildAt(background, 0);
-        AddChildAt(background2, 0);
-
-        background2.x = background.width;
+        foreground = new Foreground();
+        foreground.y = -1;
+        
+        AddChildAt(background, 2);
 
         bgMusicSound = new Sound("assets\\sfx\\level.wav", true, true);
         levelCompleteMusic = new Sound("assets\\sfx\\level_complete.wav", false, false);
@@ -56,15 +55,56 @@ public class Level : GameObject
 
     //update level here
     void Update() {
-        SetBoundaries();
         PlayerCamera();
-        HandleCamera();
+        HandleBoundaries();
+
         StopBackgroundMusic();
         LevelComplete();
 
         fighterListOrder.Sort((player1, enemy) => player1.y.CompareTo(enemy.y));
         foreach (Fighter obj in fighterListOrder) {
             AddChild(obj);
+        }
+        game.AddChildAt(foreground, 30); // not sure if this actually creates duplicates
+
+        HandleBGMovement();
+    }
+
+    private void HandleBGMovement() {
+        if (player1.isGoingLeft) {
+            if (player1.x > game.width * 5 && player1.x < background.width / 2) {
+                return;
+            }
+            if (player1.x > game.width / 2) {
+                background.MoveMidGround(false);
+                background.MoveBackDrop(false);
+                foreground.MoveForeGround(false);
+            }
+        } else if (player1.isGoingRight) {
+            if (player1.x > 0 && player1.x < game.width / 2) {
+                return;
+            }
+            if (player1.x < (background.width - (game.width / 2))) {
+                background.MoveMidGround(true);
+                background.MoveBackDrop(true);
+                foreground.MoveForeGround(true);
+            }
+        }
+    }
+
+    private void HandleBoundaries() {
+        if (player1.y < 380) { // will change later, just checking where i want it
+            player1.y = player1.oldY;
+        }
+        if (player1.y > background.height) {
+            player1.y = player1.oldY;
+        }
+
+        if (player1.x - (player1.width / 4) < 0) {
+            player1.x = 20; // dont ask
+        }
+        if (player1.x + (player1.width / 4) > background.width - player1.width) {
+            player1.x = background.width - ((player1.width + player1.width / 2) - 20); // the sprite is fucked up can't actually calculate it, just winged it here.
         }
     }
 
@@ -75,7 +115,6 @@ public class Level : GameObject
                 levelCompleteMusic.Play();
                 startedPlaying = false;
             }
-           
         }
     }
     private void StopBackgroundMusic() {
@@ -83,6 +122,7 @@ public class Level : GameObject
             playMusic.Stop();
         }
     }
+
     public void PlayerCamera()
     {
         x = game.width / 2 - player1.x;
@@ -91,56 +131,28 @@ public class Level : GameObject
         {
             x = 0;
         }
-        if (x < -(_myGame.width - player1.width))
-        {
-            x = -(_myGame.width);
+        if (x < -((_myGame.width * 5) - (_myGame.width / 6))) {
+            x = -((_myGame.width * 5) - (_myGame.width / 6));
         }
     }
 
-    public void HandleCamera() {
-        bool isEmpty = !_em.GetAllEnemies().Any();
-        if (player1.x > (game.width * 2) - (Mathf.Round(player1.width / 3)) && isEmpty) {
-            Pausable.Pause();
-            // start moving background untill its out of view.
-            // while making sure another background image slides into view.
-            // then remove the previous background and load it after the new one.
-            if (!(background.x == -game.width)) {
-                background.x -= 8;
-                background2.x -= 8;
-                player1.visible = false;
-            } else {
-                player1.x = player1.width;
-                player1.visible = true;
-                Pausable.UnPause();
-            }
-        }
-    }
-
-    public void SetBoundaries()
-    {
-        if (player1.y > _myGame.height - 127)
-        {
-            player1.y = _myGame.height - 127;
-        }
-
-        if (player1.y < background.height + 43)
-        {
-            player1.y = background.height + 39;
-        }
-
-        if (player1.x - (player1.width / 2) < 0) {
-            player1.x = player1.width - (player1.width / 2);
-        }
-
-        if (player1.x > _myGame.width + (_myGame.width) - (player1.width / 4)) {
-            player1.x = _myGame.width + (_myGame.width) - (player1.width / 4);
-        }
-
-        if (player1.x < 0 + (player1.width / 4))
-        {
-            player1.x = 0 + (player1.width / 4);
-        }
-    }
+    //public void HandleCamera() {
+    //    bool isEmpty = !_em.GetAllEnemies().Any();
+    //    if (player1.x > (game.width * 2) - (Mathf.Round(player1.width / 3)) && isEmpty) {
+    //        Pausable.Pause();
+    //        // start moving background untill its out of view.
+    //        // while making sure another background image slides into view.
+    //        // then remove the previous background and load it after the new one.
+    //        if (!(background.x == -game.width)) {
+    //            background.x -= 8;
+    //            player1.visible = false;
+    //        } else {
+    //            player1.x = player1.width;
+    //            player1.visible = true;
+    //            Pausable.UnPause();
+    //        }
+    //    }
+    //}
 
     private void Level_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
