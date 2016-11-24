@@ -11,7 +11,6 @@ public class Player : Fighter
     int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
     //public float oldX, oldY;
     public bool isColliding = false;
-    public bool hasPickedUp = false;
     public int playerAttackTimer = 0;
     //bool startAttackTimer = false;
     public int playerAttackAmount = 0;
@@ -21,6 +20,13 @@ public class Player : Fighter
     public int direction = 1; // 0 = left, 1 = right
     Sound playerDeath;
     public bool isGoingLeft, isGoingRight;
+
+    bool walkAnimCheck = false;
+    bool walkPickedUpEnemyCheck = false;
+    int walkPickedUpTimer = 0;
+    int walkTimer = 0;
+    
+    
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
@@ -44,14 +50,9 @@ public class Player : Fighter
         oldX = x;
         oldY = y;
 
-        isGoingLeft = false;
-        isGoingRight = false;
-
         if (Input.GetKey(leftKey)) {
             direction = 0;
             SetState(Fighter.State.WALKING);
-            isGoingLeft = true;
-            isGoingRight = false;
             if (!hasPickedUp) {
                 comboAttackCount = 0;
                 Walk(-5, 0);
@@ -64,8 +65,6 @@ public class Player : Fighter
         else if (Input.GetKey(rightKey)) {
             direction = 1;
             SetState(Fighter.State.WALKING);
-            isGoingLeft = false;
-            isGoingRight = true;
             if (!hasPickedUp) {
                 comboAttackCount = 0;
                 Walk(5, 0);
@@ -75,8 +74,6 @@ public class Player : Fighter
             }
         }
 
-        oldX = x;
-        oldY = y;
         if (Input.GetKey(upKey)) {
             SetState(Fighter.State.WALKING);
             if (!hasPickedUp) {
@@ -95,7 +92,10 @@ public class Player : Fighter
         }
 
         if (Input.GetKeyDown(hitKey)) {
-             //some form of delay
+            //some form of delay
+            hitAnimCheck = false;
+            walkAnimCheck = false;
+            pickUpCheck = false;
             if (!hasPickedUp && allowedToHit) {
                 comboAttackCount++;
                 hitCount++;
@@ -107,6 +107,21 @@ public class Player : Fighter
             }
             //Hit();
         }
+
+        if (Input.GetKeyDown(pickUpKey)) {
+            walkAnimCheck = false;
+            pickUpCheck = false;
+            hitAnimCheck = false;
+            if (!hasPickedUp) {
+                PickUpObject();
+            } else {
+                startThrowAnimation = true;
+                GetPickedUpEnemy().SetState(State.THROWN); // enemy state, delay is inside.
+                hasPickedUp = false;
+                SetState(Fighter.State.WALKING); // player state
+            }
+        }
+
          //some form of delay PART 2: the DELAYING
         if (!allowedToHit) {
             hitDelayTimer++;
@@ -116,15 +131,6 @@ public class Player : Fighter
             }
         }
 
-        if (Input.GetKeyDown(pickUpKey)) {
-            if (!hasPickedUp) {
-                PickUpObject();
-            } else {
-                GetPickedUpEnemy().SetState(State.THROWN); // enemy state, delay is inside.
-                hasPickedUp = false;
-                SetState(Fighter.State.WALKING); // player state
-            }
-        }
         if (_health <= 0) {
             Destroy();
             playerDeath.Play();
@@ -137,6 +143,48 @@ public class Player : Fighter
                 PickUpItem((item as Item));
             }
         }
+    }
+
+    public override void Walk(float moveX, float moveY) {
+        base.Walk(moveX, moveY);
+
+        if (!hasPickedUp) {
+            if (x > oldX || x < oldX || y > oldY  || y < oldY) {
+                if (!walkAnimCheck) {
+                    currentFrame = 79;
+                }
+                walkAnimCheck = true;
+
+                walkTimer++;
+                if (walkTimer > 2) {
+                    NextFrame();
+                    walkTimer = 0;
+                }
+                if (currentFrame == 97) {
+                    currentFrame = 79;
+                }
+            }
+        } else {
+            if (x > oldX || x < oldX || y > oldY || y < oldY) {
+                if (!walkPickedUpEnemyCheck) {
+                    currentFrame = 60;
+                }
+                walkPickedUpEnemyCheck = true;
+
+                walkPickedUpTimer++;
+                if (walkPickedUpTimer > 2) {
+                    NextFrame();
+                    walkPickedUpTimer = 0;
+                }
+                if (currentFrame == 77) {
+                    currentFrame = 60;
+                }
+            }
+        }
+    }
+
+    protected override void PickUpObject() {
+        base.PickUpObject();
     }
 
     private void PickUpItem(Item other)
@@ -154,5 +202,9 @@ public class Player : Fighter
                 _health += HEALTH_INCREMENT;
             }
         }
+    }
+
+    public bool HasPickedUpEnemy() {
+        return hasPickedUp;
     }
 }

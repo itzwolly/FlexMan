@@ -28,7 +28,7 @@ public class Level : GameObject
         _myGame = pMyGame;
         rnd = new Random();
 
-        player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
+        player1 = new Player("assets\\player_sprite\\player_sheet.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 20, 7);
         AddChildAt(player1, 3);
         player1.SetXY(100, 600);
 
@@ -71,23 +71,44 @@ public class Level : GameObject
     }
 
     private void HandleBGMovement() {
-        if (player1.isGoingLeft) {
+        if (player1.x < player1.oldX) {
+            if (healthItem != null && healthItem.x < player1.x) {
+                healthItem.x -= scaleX;
+            }
             if (player1.x > game.width * 5 && player1.x < background.width / 2) {
                 return;
             }
             if (player1.x > game.width / 2) {
-                background.MoveMidGround(false);
-                background.MoveBackDrop(false);
-                foreground.MoveForeGround(false);
+                if (player1.HasPickedUpEnemy()) {
+                    background.MoveMidGround(false, true);
+                    background.MoveBackDrop(false, true);
+                    foreground.MoveForeGround(false, true);
+                } else {
+                    background.MoveMidGround(false, false);
+                    background.MoveBackDrop(false, false);
+                    foreground.MoveForeGround(false, false);
+                }
+                if (healthItem != null) {
+                    healthItem.x += scaleX;
+                }
             }
-        } else if (player1.isGoingRight) {
+        } else if (player1.x > player1.oldX) {
+            if (healthItem != null && healthItem.x > player1.x) {
+                healthItem.x -= scaleX;
+            }
             if (player1.x > 0 && player1.x < game.width / 2) {
                 return;
             }
             if (player1.x < (background.width - (game.width / 2))) {
-                background.MoveMidGround(true);
-                background.MoveBackDrop(true);
-                foreground.MoveForeGround(true);
+                if (player1.HasPickedUpEnemy()) {
+                    background.MoveMidGround(true, true);
+                    background.MoveBackDrop(true, true);
+                    foreground.MoveForeGround(true, true);
+                } else {
+                    background.MoveMidGround(true, false);
+                    background.MoveBackDrop(true, false);
+                    foreground.MoveForeGround(true, false);
+                }
             }
         }
     }
@@ -177,7 +198,7 @@ public class Level : GameObject
                 {
                     healthItem.x -= healthItem.width;           // spawn item more to the left side, so that players don't instantly pick it up
                 }
-                game.AddChildAt(healthItem, 20);
+                AddChildAt(healthItem, 20);
             }
         }
     }

@@ -8,7 +8,7 @@ using GXPEngine;
 public class Enemy : Fighter
 {
     public const int SCORE_INCREMENT = 100;
-    int time = 0;
+    int animTimer = 0;
     Player target;
     int type = 0;
     float targetPos;            // The position the enemy will take when fighting the player
@@ -26,7 +26,7 @@ public class Enemy : Fighter
         : base(spriteName, col, row)
     {
         this.target = target;
-        _health = 4;
+        _health = 2;
         enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
         enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
         enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
@@ -88,17 +88,19 @@ public class Enemy : Fighter
             }
         }
 
-        if (target.DistanceTo(this) < target.width)
-        {
-            if (GetState() == State.WAITING) {
-                return;
-            }
-            if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN) {
-                if (GetState() == State.FIGHTING) {
-                    EnemyHit();
-                }
-            }
-        }
+        Console.WriteLine(GetState());
+
+        //if (target.DistanceTo(this) < target.width)
+        //{
+        //    if (GetState() == State.WAITING) {
+        //        return;
+        //    }
+        //    if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN) {
+        //        if (GetState() == State.FIGHTING) {
+        //            EnemyHit();
+        //        }
+        //    }
+        //}
 
         if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.FIGHTING && GetState() != State.WAITAFTERTHROWN && GetState() != State.DISABLED) {
             SetState(State.WALKING);
@@ -108,7 +110,7 @@ public class Enemy : Fighter
             oldX = x;
             oldY = y;
             this.rotation = 90;
-            this.x = target.x - width;
+            this.x = target.x - target.width;
             this.y = (target.y - target.height) - height / 4;
         }
 
@@ -164,6 +166,19 @@ public class Enemy : Fighter
         }
 
         //Console.WriteLine(GetState());
+    }
+
+    public override void Walk(float moveX, float moveY) {
+        base.Walk(moveX, moveY);
+
+        animTimer++;
+        if (animTimer > 8) {
+            NextFrame();
+            animTimer = 0;
+        }
+        if (currentFrame == 5) {
+            currentFrame = 0;
+        }
     }
 
     public override void SetState(State pState) {

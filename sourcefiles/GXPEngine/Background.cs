@@ -21,19 +21,36 @@ public class Background : Sprite
         game.AddChildAt(_backDrop, 0);
     }
 
-    public void MoveBackDrop(bool moveToLeft) {
+    public void MoveBackDrop(bool moveToLeft, bool hasPickedUpEnemy) {
         if (moveToLeft) {
-            _backDrop.x -= (scaleX + 0.5f);
+            if (hasPickedUpEnemy) {
+                _backDrop.x -= (scaleX + 0.075f);
+            } else {
+                _backDrop.x -= (scaleX + 0.5f);
+            }
         } else {
-            _backDrop.x += (scaleX + 0.5f);
+            if (hasPickedUpEnemy) {
+                _backDrop.x += (scaleX + 0.075f);
+            } else {
+                _backDrop.x += (scaleX + 0.5f);
+            }
         }
     }
 
-    public void MoveMidGround(bool moveToLeft) {
+    public void MoveMidGround(bool moveToLeft, bool hasPickedUpEnemy) {
         if (moveToLeft) {
-            _midGround.x -= (scaleX + 0.5f);
+            if (hasPickedUpEnemy) {
+                _midGround.x -= (scaleX + 0.075f);
+            } else {
+                _midGround.x -= (scaleX + 0.5f);
+            }
         } else {
-            _midGround.x += (scaleX + 0.5f); 
+            if (hasPickedUpEnemy) {
+                _midGround.x += (scaleX + 0.075f); 
+            } else {
+                _midGround.x += (scaleX + 0.5f); 
+            }
+            
         }
     }
 

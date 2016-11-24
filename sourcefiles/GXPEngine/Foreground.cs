@@ -9,11 +9,20 @@ public class Foreground : Sprite {
 
     }
 
-    public void MoveForeGround(bool moveToLeft) {
+    public void MoveForeGround(bool moveToLeft, bool hasPickedUpEnemy) {
         if (moveToLeft) {
-            x -= scaleX + 10;
+            if (hasPickedUpEnemy) {
+                x -= scaleX + 2;
+            } else {
+                x -= scaleX + 10;
+            }
+            
         } else {
-            x += scaleX + 10;
+            if (hasPickedUpEnemy) {
+                x += scaleX + 2;
+            } else {
+                x += scaleX + 10;
+            }
         }
     }
 

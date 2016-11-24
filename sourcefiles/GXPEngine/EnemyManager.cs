@@ -20,7 +20,7 @@ public class EnemyManager : GameObject
     public void createEnemies() {
         _dynamicEnemyList = new ObservableCollection<Enemy>();
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             enemy = new Enemy("red.png", 8, 1, _player);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);

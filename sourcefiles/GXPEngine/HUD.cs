@@ -55,7 +55,7 @@ public class HUD : Sprite
     private void Enemy_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
         // The moment an enemy dies, he gets added to a list
         if (e.Action == NotifyCollectionChangedAction.Add) {
-            _pointsToAddInfo.graphics.DrawString("+" + Enemy.SCORE_INCREMENT, _font, Brushes.Green, 861, -2);
+            _pointsToAddInfo.graphics.DrawString("+" + Enemy.SCORE_INCREMENT, _font, Brushes.Green, 805, 5);
             new Timer(1000, ClearPointsToAddHUD);
         }
         return;
@@ -127,10 +127,10 @@ public class HUD : Sprite
             /* FlexMan Face */
             SetFlexManImage();
             /* Name */
-            _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 115, 25); // name
+            _playerInfo.graphics.DrawString(_player.Name.ToUpper(), _font, Brushes.White, 115, 35); // name
             /* Score */
-            _playerInfo.graphics.DrawString(_player.Score.ToString("D8"), _font, Brushes.DarkOrange, 700, 25); // score
-            _playerInfo.graphics.DrawString("PTS", _font, Brushes.White, 930, 25); // score texts
+            _playerInfo.graphics.DrawString(_player.Score.ToString("D8"), _font, Brushes.DarkOrange, 700, 35); // score
+            _playerInfo.graphics.DrawString("PTS", _font, Brushes.White, 930, 35); // score texts
             /* Health */
             _playerInfo.graphics.DrawString("HP", _font, Brushes.White, 115, 81); // hp text in front of hp bar
             _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 180, 81, HEALTH_BAR_OUTLINE_WIDTH, 23); // hp bar outline

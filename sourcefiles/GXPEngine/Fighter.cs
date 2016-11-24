@@ -7,7 +7,8 @@ using System.Drawing;
 
 public class Fighter : Pausable
 {
-    const int HIT_DURATION = 25;
+    const int HIT_DURATION = 29;
+    const int PICKUP_DURATION = 29;
 
     Sprite hand;
     int hitTimer = 0;
@@ -18,7 +19,6 @@ public class Fighter : Pausable
     public int _health = 0;
     public int _maxHealth = 0;
     private State _state;
-    private int timer;
     protected bool _invincible = false;
     Canvas _collisionHitBox;
     string charName;
@@ -34,6 +34,14 @@ public class Fighter : Pausable
     int direction = 0;
     public int comboAttackCount = 0;
     Sound pickUpOne, pickUpTwo;
+    public bool hitAnimCheck = false;
+    public bool pickUpCheck = false;
+    public bool throwCheck = false;
+    int hitAnimTimer = 0;
+    int pickUpTimer = 0;
+    int throwTimer = 0;
+    public bool hasPickedUp = false;
+    public bool startThrowAnimation = false;
 
     public enum State {
         WAITING,
@@ -72,10 +80,6 @@ public class Fighter : Pausable
         comboHitTwo = new Sound("assets\\sfx\\combohit2.wav", false, false);
         comboHitThree = new Sound("assets\\sfx\\combohit2.wav", false, false);
 
-        
-        
-        
-
         pickUpOne = new Sound("assets\\sfx\\pick1.wav", false, false);
         pickUpTwo = new Sound("assets\\sfx\\pick2.wav", false, false);
 
@@ -106,6 +110,12 @@ public class Fighter : Pausable
     protected void Update() {
         UpdateHit();
         hittingAnimation();
+
+        if (startThrowAnimation) {
+            ThrowAnimation();
+        } else {
+            PickingUpAnimation();
+        }
 
         DisableFighter(true, 100);
 
@@ -145,19 +155,62 @@ public class Fighter : Pausable
         }
     }
 
-    private void hittingAnimation()
-    {
-        if (isHitting == true)
-        {
-            timer++;
-            if (timer > 10)
-            {
-                NextFrame();
-                timer = 0;
+    public void ThrowAnimation() {
+        if (x == oldX) {
+            // 39 - 59
+            if (!throwCheck) {
+                currentFrame = 39;
             }
-            if (currentFrame == 8)
-            {
+            throwCheck = true;
+
+            if (currentFrame > 58) {
+                startThrowAnimation = false;
                 currentFrame = 0;
+                return;
+            }
+
+            throwTimer++;
+            if (throwTimer > 2) {
+                NextFrame();
+                throwTimer = 0;
+            }
+        }
+    }
+
+    private void PickingUpAnimation() {
+        if (isPickedUp) {
+            if (x == oldX) {
+                if (!pickUpCheck) {
+                    currentFrame = 20;
+                }
+                pickUpCheck = true;
+
+                if (currentFrame > 27) {
+                    return;
+                }
+
+                pickUpTimer++;
+                if (pickUpTimer > 1) {
+                    NextFrame();
+                    pickUpTimer = 0;
+                }
+            }
+        }
+    }
+
+    private void hittingAnimation() {
+        if (isHitting == true) {
+            if (x == oldX) {
+                if (!hitAnimCheck) {
+                    currentFrame = 98;
+                }
+                hitAnimCheck = true;
+
+                hitAnimTimer++;
+                if (hitAnimTimer > 1) {
+                    NextFrame();
+                    hitAnimTimer = 0;
+                }
             }
         }
     }
@@ -197,13 +250,6 @@ public class Fighter : Pausable
                     //hitSound.Play();
                 }
                 if (item is Enemy) {
-                    //(item as Enemy).gotHitAmount++;
-                    //if (isHitting && !isPickedUp && (item as Enemy).gotHitAmount == 3) {
-                    //    item.x -= scaleX * 150; // Fighter gets knockbacked
-                    //    item.y -= (item as Fighter).height / 3;
-                    //    (item as Enemy).SetState(Fighter.State.DISABLED);
-                    //}
-
                     if (comboAttackCount == 1) {
                         switch (Utils.Random(0, 2)) {
                             case 0:
@@ -228,7 +274,6 @@ public class Fighter : Pausable
                         }
                     } else if (comboAttackCount == 3) {
                         hitThree.Play();
-                        comboHit.Frequency = 10; 
                         comboHit = comboHitThree.Play();
                     }
 
@@ -255,7 +300,7 @@ public class Fighter : Pausable
         return _pickedUpEnemy;
     }
 
-    public void Walk(float moveX, float moveY) {
+    public virtual void Walk(float moveX, float moveY) {
         if (isHitting == false && isPickedUp == false && GetState() == State.WALKING) {
             x += moveX;
             y += moveY;
@@ -264,16 +309,6 @@ public class Fighter : Pausable
             }          // Mirror the sprite the correct way
             if (moveX < 0) {
                 scaleX = 1.0f; 
-            }
-            timer++;
-            if (timer > 8)
-            {
-                NextFrame();
-                timer = 0;
-            }
-            if (currentFrame == 5)
-            {
-                currentFrame = 0;
             }
         }
     }
@@ -299,6 +334,9 @@ public class Fighter : Pausable
     private void EndPickUp() {
         isPickedUp = false;
         hand.visible = false;
+        if (!hasPickedUp) {
+            currentFrame = 0;
+        } 
     }
 
     protected void Hit() {
@@ -310,11 +348,8 @@ public class Fighter : Pausable
         }
         if (isHitting == false && GetState() == State.FIGHTING) {
             isHitting = true;
-            hand.visible = true;
             hitTimer = HIT_DURATION;
-            currentFrame = 6;
         }
-        //SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
 
     protected void EnemyHit() {
@@ -328,19 +363,16 @@ public class Fighter : Pausable
             isHitting = true;
             hand.visible = true;
             hitTimer = HIT_DURATION;
-            currentFrame = 6;
         }
-        //SetState(State.WALKING);                    // This enables the enemies in the fighting state to continue moving after hitting
     }
 
-    protected void PickUpObject() {
+    protected virtual void PickUpObject() {
         if (GetState() == State.WALKING) {
             SetState(State.FIGHTING);
         }
         if (isPickedUp == false && HasEnoughStamina() && GetState() == State.FIGHTING) {
             isPickedUp = true;
-            hand.visible = true;
-            hitTimer = HIT_DURATION;
+            hitTimer = PICKUP_DURATION;
         }
     }
 
