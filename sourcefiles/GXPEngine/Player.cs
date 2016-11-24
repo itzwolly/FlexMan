@@ -8,7 +8,6 @@ using GXPEngine;
 public class Player : Fighter
 {
     const int HEALTH_INCREMENT = 5;
-
     int leftKey, rightKey, upKey, downKey, hitKey, pickUpKey;
     //public float oldX, oldY;
     public bool isColliding = false;
@@ -21,6 +20,7 @@ public class Player : Fighter
     int hitDelayTimer = 0;
     public int direction = 1; // 0 = left, 1 = right
     Sound playerDeath;
+    public bool isGoingLeft, isGoingRight;
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
         this.leftKey = leftKey;
@@ -43,9 +43,15 @@ public class Player : Fighter
 
         oldX = x;
         oldY = y;
+
+        isGoingLeft = false;
+        isGoingRight = false;
+
         if (Input.GetKey(leftKey)) {
             direction = 0;
             SetState(Fighter.State.WALKING);
+            isGoingLeft = true;
+            isGoingRight = false;
             if (!hasPickedUp) {
                 comboAttackCount = 0;
                 Walk(-5, 0);
@@ -56,8 +62,10 @@ public class Player : Fighter
             
         }
         else if (Input.GetKey(rightKey)) {
-            SetState(Fighter.State.WALKING);
             direction = 1;
+            SetState(Fighter.State.WALKING);
+            isGoingLeft = false;
+            isGoingRight = true;
             if (!hasPickedUp) {
                 comboAttackCount = 0;
                 Walk(5, 0);
