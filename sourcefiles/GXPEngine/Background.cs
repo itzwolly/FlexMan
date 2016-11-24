@@ -23,9 +23,9 @@ public class Background : Sprite
 
     public void MoveBackDrop(bool moveToLeft) {
         if (moveToLeft) {
-            _backDrop.x -= (scaleX + 0.15f);
+            _backDrop.x -= (scaleX + 0.5f);
         } else {
-            _backDrop.x += (scaleX + 0.15f);
+            _backDrop.x += (scaleX + 0.5f);
         }
     }
 
