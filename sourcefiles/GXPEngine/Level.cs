@@ -18,13 +18,15 @@ public class Level : GameObject
     SoundChannel playMusic;
     bool startedPlaying = true;
     Item healthItem;
-    int _randomNumber;
+    Random rnd;
+    int _randomNumber1, _randomNumber2, _randomSum;
 
 
     //initialize game here
     public Level (MyGame pMyGame)
     {
         _myGame = pMyGame;
+        rnd = new Random();
 
         player1 = new Player("blue.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 8, 1);
         AddChildAt(player1, 3);
@@ -156,17 +158,26 @@ public class Level : GameObject
     {
         if (e.Action == NotifyCollectionChangedAction.Add)
         {
-            healthItem = new Item();
-            healthItem.scale = 0.5f;
-            healthItem.SetOrigin(healthItem.width / 2, healthItem.height / 2);
-            healthItem.x = (e.NewItems[0] as Enemy).x;
-            healthItem.y = (e.NewItems[0] as Enemy).y - 200;
+            _randomNumber1 = Utils.Random(1, 7);            // get a 'random' value
+            _randomNumber2 = Utils.Random(1, 7);            // get a DIFFERENT 'random' value 
+            _randomSum = _randomNumber1 + _randomNumber2;   // the sum will be used for chance
 
-            _randomNumber = Utils.Random(0, 8);
-            Console.WriteLine(_randomNumber);
-            if (_randomNumber == 7)
+            if (_randomSum == 4)                            // 3/36 possible outcomes; roughly 8% chance (Seems a bit low tbh)
             {
-                AddChildAt(healthItem, 20);
+                healthItem = new Item();
+                healthItem.SetOrigin(healthItem.width / 2, healthItem.height / 2);
+                healthItem.x = (e.NewItems[0] as Enemy).x;
+                healthItem.y = (e.NewItems[0] as Enemy).y - (e.NewItems[0] as Enemy).height / 4;
+
+                if (player1.x < healthItem.x)                   // if player was on the left side
+                {
+                    healthItem.x += healthItem.width;           // spawn item more to the right side, so that players don't instantly pick it up
+                }
+                else                                            // if player was on the right side
+                {
+                    healthItem.x -= healthItem.width;           // spawn item more to the left side, so that players don't instantly pick it up
+                }
+                game.AddChildAt(healthItem, 20);
             }
         }
     }

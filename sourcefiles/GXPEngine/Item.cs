@@ -6,7 +6,7 @@ using GXPEngine;
 
 class Item : Sprite
 {
-   public Item() : base("colors.png")
+   public Item() : base("Hpickup.png")
     {
         // empty
     }

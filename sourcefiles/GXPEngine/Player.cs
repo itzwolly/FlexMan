@@ -134,8 +134,7 @@ public class Player : Fighter
         {
             if (item is Item)
             {
-                Item newItem = item as Item;
-                PickUpItem(newItem);
+                PickUpItem((item as Item));
             }
         }
     }
@@ -145,16 +144,15 @@ public class Player : Fighter
         other.Destroy();
         int difference = GetMaxHealth() - GetHealth();
 
-        if (difference > 0)
+        if (difference > 0)                      // if there is a difference
         {
-            if (difference < HEALTH_INCREMENT)
+            if (difference < HEALTH_INCREMENT)   // and the difference is smaller than the health increment (which is 10)
             {
-                _health += difference;
+                _health += difference;           // add the difference to health as increment
             } else
             {
                 _health += HEALTH_INCREMENT;
             }
         }
-
     }
 }
