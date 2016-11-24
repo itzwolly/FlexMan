@@ -113,6 +113,7 @@ public class Player : Fighter
             pickUpCheck = false;
             hitAnimCheck = false;
             if (!hasPickedUp) {
+                startThrowAnimation = false;
                 PickUpObject();
             } else {
                 startThrowAnimation = true;
@@ -148,6 +149,7 @@ public class Player : Fighter
     public override void Walk(float moveX, float moveY) {
         base.Walk(moveX, moveY);
 
+        startThrowAnimation = false;
         if (!hasPickedUp) {
             if (x > oldX || x < oldX || y > oldY  || y < oldY) {
                 if (!walkAnimCheck) {

@@ -21,7 +21,7 @@ public class EnemyManager : GameObject
         _dynamicEnemyList = new ObservableCollection<Enemy>();
 
         for (int i = 0; i < 2; i++) {
-            enemy = new Enemy("red.png", 8, 1, _player);
+            enemy = new Enemy("assets\\enemy_sprite\\enemy_sheet.png", 20, 2, _player);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);
             try {

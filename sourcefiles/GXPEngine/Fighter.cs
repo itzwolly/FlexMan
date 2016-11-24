@@ -42,6 +42,8 @@ public class Fighter : Pausable
     int throwTimer = 0;
     public bool hasPickedUp = false;
     public bool startThrowAnimation = false;
+    public bool enemyAttack = false;
+    public bool isAttacking = false;
 
     public enum State {
         WAITING,
@@ -109,7 +111,7 @@ public class Fighter : Pausable
 
     protected void Update() {
         UpdateHit();
-        hittingAnimation();
+        PlayerHittingAnimation(this);
 
         if (startThrowAnimation) {
             ThrowAnimation();
@@ -198,18 +200,20 @@ public class Fighter : Pausable
         }
     }
 
-    private void hittingAnimation() {
-        if (isHitting == true) {
-            if (x == oldX) {
-                if (!hitAnimCheck) {
-                    currentFrame = 98;
-                }
-                hitAnimCheck = true;
+    private void PlayerHittingAnimation(Fighter player) {
+        if (player is Player) {
+            if (isHitting == true) {
+                if (x == oldX) {
+                    if (!hitAnimCheck) {
+                        currentFrame = 98;
+                    }
+                    hitAnimCheck = true;
 
-                hitAnimTimer++;
-                if (hitAnimTimer > 1) {
-                    NextFrame();
-                    hitAnimTimer = 0;
+                    hitAnimTimer++;
+                    if (hitAnimTimer > 1) {
+                        NextFrame();
+                        hitAnimTimer = 0;
+                    }
                 }
             }
         }
@@ -325,15 +329,13 @@ public class Fighter : Pausable
         alpha = 1f;
     }
 
-    private void EndHit() {
+    protected virtual void EndHit() {
         isHitting = false;
-        hand.visible = false;
         attackOnce = false;
     }
 
     private void EndPickUp() {
         isPickedUp = false;
-        hand.visible = false;
         if (!hasPickedUp) {
             currentFrame = 0;
         } 
@@ -356,13 +358,12 @@ public class Fighter : Pausable
         if (GetState() == State.PICKEDUP) {
             return;
         }
-
-        enemyHitCountTimer++;
+        enemyHitCountTimer++;       
         if (isHitting == false && GetState() == State.FIGHTING && enemyHitCountTimer == 85) {
             enemyHitCountTimer = 0;
             isHitting = true;
-            hand.visible = true;
             hitTimer = HIT_DURATION;
+            
         }
     }
 

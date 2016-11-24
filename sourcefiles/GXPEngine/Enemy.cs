@@ -19,6 +19,8 @@ public class Enemy : Fighter
     public int gotHitAmount = 0;
     int direction = 0;
     Sound throwOne, throwTwo;
+    bool walkAnimCheck;
+    int walkTimer;
 
     public int Type { get { return type; } set { type = value; } }
 
@@ -26,7 +28,7 @@ public class Enemy : Fighter
         : base(spriteName, col, row)
     {
         this.target = target;
-        _health = 2;
+        _health = 4;
         enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
         enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
         enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
@@ -54,6 +56,9 @@ public class Enemy : Fighter
                 rotation = 90;
             }
         }
+
+        oldX = x;
+        oldX = y;
         
         if (x > targetPos + 2) { // Player is on the left side
             if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.DISABLED && GetState() != State.WAITAFTERTHROWN) {
@@ -88,25 +93,33 @@ public class Enemy : Fighter
             }
         }
 
+        if (target.DistanceTo(this) < target.width) {
+            
+            if (GetState() == State.WAITING) {
+                return;
+            }
+            if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN) {
+                if (GetState() == State.FIGHTING) {
+                    walkAnimCheck = false;
+                    //enemyAttack = true;
+                    isAttacking = true;
+                    EnemyHit();
+                }
+            }
+        }
         Console.WriteLine(GetState());
-
-        //if (target.DistanceTo(this) < target.width)
-        //{
-        //    if (GetState() == State.WAITING) {
-        //        return;
-        //    }
-        //    if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN) {
-        //        if (GetState() == State.FIGHTING) {
-        //            EnemyHit();
-        //        }
-        //    }
-        //}
 
         if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.FIGHTING && GetState() != State.WAITAFTERTHROWN && GetState() != State.DISABLED) {
             SetState(State.WALKING);
         }
 
+        if (GetState() == State.WALKING) {
+            isAttacking = false;
+        }
+
         if (GetState() == State.PICKEDUP) {
+            currentFrame = 36; 
+
             oldX = x;
             oldY = y;
             this.rotation = 90;
@@ -165,19 +178,30 @@ public class Enemy : Fighter
             }
         }
 
-        //Console.WriteLine(GetState());
     }
 
     public override void Walk(float moveX, float moveY) {
         base.Walk(moveX, moveY);
 
-        animTimer++;
-        if (animTimer > 8) {
-            NextFrame();
-            animTimer = 0;
-        }
-        if (currentFrame == 5) {
-            currentFrame = 0;
+        if (!isPickedUp && GetState() != State.DISABLED && GetState() != State.THROWN && GetState() != State.WAITAFTERTHROWN) {
+            if (x > oldX || x < oldX || y > oldY || y < oldY) {
+                if (!walkAnimCheck) {
+                    currentFrame = 20;
+                }
+                walkAnimCheck = true;
+
+                if (!isAttacking) {
+                    walkTimer++;
+                    if (currentFrame == 34) {
+                        currentFrame = 20;
+                    }
+
+                    if (walkTimer > 2) {
+                        NextFrame();
+                        walkTimer = 0;
+                    }
+                }
+            }
         }
     }
 
@@ -210,5 +234,9 @@ public class Enemy : Fighter
         {
             scaleX = -1.0f;
         }
+    }
+
+    protected override void EndHit() {
+        base.EndHit();
     }
 }
