@@ -17,6 +17,7 @@ namespace GXPEngine
         private void Update()
         {
             _time -= Time.deltaTime;
+
             if (_time <= 0)
             {
                 Destroy();

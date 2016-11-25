@@ -28,6 +28,9 @@ public class WinScreen : Sprite {
 
         finalScore = Mathf.Round(Convert.ToSingle(_player.Score * 100) / endTimer * Mathf.Sqrt(3.14f) * Mathf.Pow(4, 5));
 
+        //int conditional = _player.GetMaxHealth() - _player.GetHealth();
+        //finalScore = Mathf.Round(_player.score * 100 - (endTimer * 1.5f) - (conditional == 0 ? 0 : conditional * 2.5f));
+
         _pfc = new PrivateFontCollection();
         _pfc.AddFontFile("assets\\font\\zig_____.ttf");
         _font = new Font(_pfc.Families[0], 24);

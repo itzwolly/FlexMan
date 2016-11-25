@@ -81,9 +81,25 @@ public class MyGame : Game { //MyGame is a Game
                 break;
             case GameState.LEVEL:
                 if (_level != null) {
+                    if (_level.GetHud() != null) {
+                        _level.GetHud().Destroy();
+                    }
+                    if (_level.GetBackground() != null) {
+                        _level.GetBackground().Destroy();
+                        if (_level.GetBackground().GetBackDrop() != null) {
+                            _level.GetBackground().GetBackDrop().Destroy();
+                        }
+                        if (_level.GetBackground().GetMidGround() != null) {
+                            _level.GetBackground().GetMidGround().Destroy();
+                        }
+                    }
+                    if (_level.GetForeGround() != null) {
+                        _level.GetForeGround().Destroy();
+                    }
                     _level.Destroy();
                     _level = null;
                 }
+                
                 break;
             case GameState.LOSESCREEN:
                 if (_loseScreen != null) {

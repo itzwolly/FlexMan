@@ -7,9 +7,9 @@ using System.Collections.ObjectModel;
 
 public class EnemyManager : GameObject
 {
-    public const int TOTAL_ENEMY_COUNT = 5;
     public const int GENERIC_ENEMY_COUNT = 2;
     public const int RELATIVELY_STRONGER_ENEMY_COUNT = 3;
+    public const int TOTAL_ENEMY_COUNT = GENERIC_ENEMY_COUNT + RELATIVELY_STRONGER_ENEMY_COUNT;
 
     public List<Enemy> _listOfEnemies = new List<Enemy>();
     ObservableCollection<Enemy> _dynamicEnemyList;

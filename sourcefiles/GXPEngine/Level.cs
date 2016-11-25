@@ -28,6 +28,7 @@ public class Level : GameObject
     //initialize game here
     public Level (MyGame pMyGame)
     {
+        
         _myGame = pMyGame;
         rnd = new Random();
 
@@ -62,7 +63,6 @@ public class Level : GameObject
 
     //update level here
     void Update() {
-        AddTimerCount();
         PlayerCamera();
         HandleBoundaries();
         //HandlePausing();
@@ -93,6 +93,8 @@ public class Level : GameObject
             }
             setWinScreen = true;
             new GXPEngine.Timer(6000, SetWinScreen);
+        } else {
+            AddTimerCount(); // to keep track of score untill you win.
         }
     }
 
@@ -108,10 +110,8 @@ public class Level : GameObject
 
     private void HandleBGMovement() {
         if (player1.x < player1.oldX) {
-            //if (healthItem != null && healthItem.x < player1.x) {
-            //    healthItem.x -= scaleX;
-            //}
             if (player1.x > game.width * 5 && player1.x < background.width / 2) {
+                
                 return;
             }
             if (player1.x > game.width / 2) {
@@ -124,18 +124,15 @@ public class Level : GameObject
                     background.MoveBackDrop(false, false);
                     foreground.MoveForeGround(false, false);
                 }
-                if (healthItem != null) {
-                    healthItem.x += scaleX;
-                }
+            } else {
+
             }
         } else if (player1.x > player1.oldX) {
-            //if (healthItem != null && healthItem.x > player1.x) {
-            //    healthItem.x -= -scaleX;
-            //}
             if (player1.x > 0 && player1.x < game.width / 2) {
                 return;
             }
             if (player1.x < (background.width - (game.width / 2))) {
+                //Console.WriteLine(background.width - (game.width / 2));
                 if (player1.HasPickedUpEnemy()) {
                     background.MoveMidGround(true, true);
                     background.MoveBackDrop(true, true);
@@ -145,6 +142,11 @@ public class Level : GameObject
                     background.MoveBackDrop(true, false);
                     foreground.MoveForeGround(true, false);
                 }
+            } else {
+                background.x = 0;
+                background.y = 0;
+                foreground.x = 0;
+                foreground.y = 0;
             }
         }
     }
@@ -249,5 +251,17 @@ public class Level : GameObject
 
     public EnemyManager GetEnemyManager() {
         return _em;
+    }
+
+    public HUD GetHud() {
+        return hud;
+    }
+
+    public Background GetBackground () {
+        return background;
+    }
+
+    public Foreground GetForeGround() {
+        return foreground;
     }
 }
