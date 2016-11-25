@@ -20,12 +20,13 @@ public class Player : Fighter
     public int direction = 1; // 0 = left, 1 = right
     Sound playerDeath;
     public bool isGoingLeft, isGoingRight;
-
+    public bool isDead = false;
     bool walkAnimCheck = false;
     bool walkPickedUpEnemyCheck = false;
     int walkPickedUpTimer = 0;
     int walkTimer = 0;
-    
+
+    public int finishTimer = 0;
     
 
     public Player(string spriteName, int leftKey, int rightKey, int upKey, int downKey, int hitKey, int pickUpKey, int col, int row) : base(spriteName, col, row) {
@@ -36,7 +37,7 @@ public class Player : Fighter
         this.hitKey = hitKey;
         this.pickUpKey = pickUpKey;
         Name = "Flexman";
-        _health = 30;
+        _health = 15;
         _maxHealth = _health;
         Stamina = 100;
         _maxStamina = Stamina;
@@ -134,10 +135,11 @@ public class Player : Fighter
 
         if (_health <= 0) {
             Destroy();
+            isDead = true;
             playerDeath.Play();
         }
 
-        foreach(GameObject item in GetCollisions())
+        foreach(GameObject item in GetHitBox().GetCollisions())
         {
             if (item is Item)
             {

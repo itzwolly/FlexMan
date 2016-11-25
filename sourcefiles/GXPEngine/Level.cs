@@ -19,8 +19,11 @@ public class Level : GameObject
     bool startedPlaying = true;
     Item healthItem;
     Random rnd;
+    HUD hud;
     int _randomNumber1, _randomNumber2, _randomSum;
-
+    public bool isPaused = false;
+    public int stage = 0;
+    bool setWinScreen = false;
 
     //initialize game here
     public Level (MyGame pMyGame)
@@ -28,7 +31,7 @@ public class Level : GameObject
         _myGame = pMyGame;
         rnd = new Random();
 
-        player1 = new Player("assets\\player_sprite\\player_sheet.png", Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.SPACE, Key.TAB, 20, 7);
+        player1 = new Player("assets\\player_sprite\\player_sheet.png", Key.A, Key.D, Key.W, Key.S, Key.V, Key.B, 20, 7);
         AddChildAt(player1, 3);
         player1.SetXY(100, 600);
 
@@ -51,12 +54,18 @@ public class Level : GameObject
         foreach (Fighter fighter in _em.GetAllEnemies()) {
             fighterListOrder.Add(fighter);
         }
+
+        hud = new HUD(this, GetPlayer());
+        hud.y = game.height - hud.height;
+        game.AddChildAt(hud, 1);
     }
 
     //update level here
     void Update() {
+        AddTimerCount();
         PlayerCamera();
         HandleBoundaries();
+        //HandlePausing();
 
         StopBackgroundMusic();
         LevelComplete();
@@ -65,16 +74,43 @@ public class Level : GameObject
         foreach (Fighter obj in fighterListOrder) {
             AddChild(obj);
         }
+
         game.AddChildAt(foreground, 30); // not sure if this actually creates duplicates
 
+        ShowDeathScreen();
         HandleBGMovement();
+        HandleWinScreen();
+    }
+
+    private void AddTimerCount() {
+        player1.finishTimer++;
+    }
+
+    private void HandleWinScreen() {
+        if (_em.GetDeadEnemyList().Count == EnemyManager.TOTAL_ENEMY_COUNT) {
+            if (setWinScreen) {
+                return;
+            }
+            setWinScreen = true;
+            new GXPEngine.Timer(6000, SetWinScreen);
+        }
+    }
+
+    private void SetWinScreen() {
+        _myGame.SetState(MyGame.GameState.WINSCREEN);
+    }
+
+    private void ShowDeathScreen() {
+        if (player1.isDead) {
+            _myGame.SetState(MyGame.GameState.LOSESCREEN);
+        }
     }
 
     private void HandleBGMovement() {
         if (player1.x < player1.oldX) {
-            if (healthItem != null && healthItem.x < player1.x) {
-                healthItem.x -= scaleX;
-            }
+            //if (healthItem != null && healthItem.x < player1.x) {
+            //    healthItem.x -= scaleX;
+            //}
             if (player1.x > game.width * 5 && player1.x < background.width / 2) {
                 return;
             }
@@ -93,9 +129,9 @@ public class Level : GameObject
                 }
             }
         } else if (player1.x > player1.oldX) {
-            if (healthItem != null && healthItem.x > player1.x) {
-                healthItem.x -= scaleX;
-            }
+            //if (healthItem != null && healthItem.x > player1.x) {
+            //    healthItem.x -= -scaleX;
+            //}
             if (player1.x > 0 && player1.x < game.width / 2) {
                 return;
             }
@@ -124,9 +160,12 @@ public class Level : GameObject
         if (player1.x - (player1.width / 4) < 0) {
             player1.x = 20; // dont ask
         }
+
+
         if (player1.x + (player1.width / 4) > background.width - player1.width) {
             player1.x = background.width - ((player1.width + player1.width / 2) - 20); // the sprite is fucked up can't actually calculate it, just winged it here.
         }
+        
     }
 
     private void LevelComplete() {
@@ -152,6 +191,7 @@ public class Level : GameObject
         {
             x = 0;
         }
+
         if (x < -((_myGame.width * 5) - (_myGame.width / 6))) {
             x = -((_myGame.width * 5) - (_myGame.width / 6));
         }

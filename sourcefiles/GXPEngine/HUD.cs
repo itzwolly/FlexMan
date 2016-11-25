@@ -140,6 +140,8 @@ public class HUD : Sprite
             _playerInfo.graphics.DrawRectangle(Pens.WhiteSmoke, 645, 81, STAMINA_BAR_OUTLINE_WIDTH, 23); // stamina bar outline
             _playerInfo.graphics.FillRectangle((_player.HasEnoughStamina() ? Brushes.RoyalBlue : Brushes.Red), 646, 82, GetStaminaBarWidth(), 22); // stamina bar itself
 
+            _playerInfo.graphics.DrawString("TIME: " + _player.finishTimer, _font, Brushes.White, width / 3, 35);
+
             // DEBUG
             //_playerInfo.graphics.DrawString(_player.GetHealth() + " - " + _player.GetMaxHealth(), _font, Brushes.White, 800, 74);
         } catch {

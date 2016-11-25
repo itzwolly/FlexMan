@@ -21,20 +21,23 @@ public class Enemy : Fighter
     Sound throwOne, throwTwo;
     bool walkAnimCheck;
     int walkTimer;
+    public int _id;
 
     public int Type { get { return type; } set { type = value; } }
 
-    public Enemy(string spriteName, int col, int row, Player target)
+    public Enemy(string spriteName, int col, int row, Player target, int id)
         : base(spriteName, col, row)
     {
         this.target = target;
         _health = 4;
+        _id = id;
         enemyDeathOne = new Sound("assets\\sfx\\death1.wav", false, false);
         enemyDeathTwo = new Sound("assets\\sfx\\death2.wav", false, false);
         enemyDeathThree = new Sound("assets\\sfx\\death3.wav", false, false);
 
         throwOne = new Sound("assets\\sfx\\throw1.wav", false, false);
         throwTwo = new Sound("assets\\sfx\\throw2.wav", false, false);
+
     }
 
     void Update()
@@ -65,7 +68,12 @@ public class Enemy : Fighter
                 SetState(State.WALKING);
             }
             if (GetState() == State.WALKING) {
-                Walk(-4, 0);
+                if (_id == 10) {
+
+                    Walk(-4, 0);
+                } else {
+                    Walk(-2, 0);
+                }
             }
         } else {
             if (GetState() != State.PICKEDUP && GetState() != State.DISABLED && GetState() != State.THROWN && GetState() != State.WAITAFTERTHROWN) {
@@ -82,14 +90,29 @@ public class Enemy : Fighter
                 SetState(State.WALKING);
             }
             if (GetState() == State.WALKING) {
-                Walk(4, 0);
+                if (_id == 10) {
+                    Walk(4, 0);
+                } else {
+                    Walk(2, 0);
+                }
+                
             }
         } else {
             if (y > target.y) { // Player is above the enemy
-                Walk(0, -4);
+                if (_id == 10) {
+
+                    Walk(0, -4);
+                } else {
+                    Walk(0, -2);
+                }
             }
             if (y < target.y) {  // Player is below the enemy
-                Walk(0, 4);
+                if (_id == 10) {
+
+                    Walk(0, 4);
+                } else {
+                    Walk(0, 2);
+                }
             }
         }
 
@@ -107,7 +130,6 @@ public class Enemy : Fighter
                 }
             }
         }
-        Console.WriteLine(GetState());
 
         if (GetState() != State.WAITING && GetState() != State.PICKEDUP && GetState() != State.THROWN && GetState() != State.FIGHTING && GetState() != State.WAITAFTERTHROWN && GetState() != State.DISABLED) {
             SetState(State.WALKING);
@@ -183,7 +205,7 @@ public class Enemy : Fighter
     public override void Walk(float moveX, float moveY) {
         base.Walk(moveX, moveY);
 
-        if (!isPickedUp && GetState() != State.DISABLED && GetState() != State.THROWN && GetState() != State.WAITAFTERTHROWN) {
+        if (!isPickedUp && GetState() != State.DISABLED && GetState() != State.THROWN && GetState() != State.WAITAFTERTHROWN && GetState() != State.WAITING) {
             if (x > oldX || x < oldX || y > oldY || y < oldY) {
                 if (!walkAnimCheck) {
                     currentFrame = 20;

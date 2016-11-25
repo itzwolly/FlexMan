@@ -97,15 +97,15 @@ public class Fighter : Pausable
     }
 
     protected Sprite CreateHand() {
-        Sprite hand = new Sprite("colors.png");
+        Sprite hand = new Sprite("assets\\enemy_sprite\\HitSprite.png");
         hand.SetOrigin(32, 32);
         hand.width = 32;
         hand.height = 32;
         AddChild(hand);
-        hand.x = -50;
-        hand.y = -100;
+        hand.x = -40;
+        hand.y = -75;
         hand.visible = false;
-        hand.alpha = 0.33f;
+        hand.alpha = .8f;
         return hand;
     }
 
@@ -225,7 +225,7 @@ public class Fighter : Pausable
                 continue;
             }
             if (item == this) continue;
-            if (item is Fighter && item.y + 20 >= y && item.y - 20 <= y) { // && fighter.invincible == false
+            if (item is Fighter && item.y + 20 >= y && item.y - 20 <= y) {
                 isHitting = true;
                 if (item is Enemy) { 
                     Enemy enem = item as Enemy;
@@ -249,10 +249,21 @@ public class Fighter : Pausable
                 }
                 attackOnce = true;
 
-                if (!isPickedUp) {
-                    (item as Fighter)._health--;
-                    //hitSound.Play();
+                if (item is Player) {
+                    comboHit = comboHitOne.Play();
+                    if ((hand.parent as Enemy)._id == 10) {
+                        (item as Player)._health--;
+                    } else {
+                        (item as Player)._health-=3;
+                    }
                 }
+
+                if (item is Enemy) {
+                    if (!isPickedUp) {
+                        (item as Enemy)._health--;
+                    }
+                }
+                
                 if (item is Enemy) {
                     if (comboAttackCount == 1) {
                         switch (Utils.Random(0, 2)) {
@@ -332,6 +343,7 @@ public class Fighter : Pausable
     protected virtual void EndHit() {
         isHitting = false;
         attackOnce = false;
+        hand.visible = false;
     }
 
     private void EndPickUp() {
@@ -362,6 +374,7 @@ public class Fighter : Pausable
         if (isHitting == false && GetState() == State.FIGHTING && enemyHitCountTimer == 85) {
             enemyHitCountTimer = 0;
             isHitting = true;
+            hand.visible = true;
             hitTimer = HIT_DURATION;
             
         }

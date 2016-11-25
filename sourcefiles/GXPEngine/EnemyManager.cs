@@ -7,6 +7,10 @@ using System.Collections.ObjectModel;
 
 public class EnemyManager : GameObject
 {
+    public const int TOTAL_ENEMY_COUNT = 5;
+    public const int GENERIC_ENEMY_COUNT = 2;
+    public const int RELATIVELY_STRONGER_ENEMY_COUNT = 3;
+
     public List<Enemy> _listOfEnemies = new List<Enemy>();
     ObservableCollection<Enemy> _dynamicEnemyList;
     Enemy enemy;
@@ -20,22 +24,34 @@ public class EnemyManager : GameObject
     public void createEnemies() {
         _dynamicEnemyList = new ObservableCollection<Enemy>();
 
-        for (int i = 0; i < 2; i++) {
-            enemy = new Enemy("assets\\enemy_sprite\\enemy_sheet.png", 20, 2, _player);
+        for (int i = 0; i < GENERIC_ENEMY_COUNT; i++) {
+            enemy = new Enemy("assets\\enemy_sprite\\enemy_sheet.png", 20, 2, _player, 10);
             game.AddChild(enemy);
             _listOfEnemies.Add(enemy);
-            try {
-                _listOfEnemies[0].Type = 1; // type 1 is right
-                _listOfEnemies[0].SetState(Fighter.State.WALKING);
-                enemyPosition[0] = 1;
-
-                _listOfEnemies[1].Type = 2; // type 2 is left
-                _listOfEnemies[1].SetState(Fighter.State.WALKING);
-                enemyPosition[1] = 1;
-            } catch {
-                // empty, dont kill us pls
-            }
+            
             enemy.SetXY(Utils.Random(105, 1024 - enemy.width), Utils.Random(400, 600));
+            enemy.SetState(Fighter.State.WAITING);
+        }
+
+        for (int i = 0; i < RELATIVELY_STRONGER_ENEMY_COUNT; i++) {
+            enemy = new Enemy("assets\\enemy_sprite\\enemy_sheet_two.png", 20, 2, _player, 20);
+            game.AddChild(enemy);
+            _listOfEnemies.Add(enemy);
+
+            enemy.SetXY(Utils.Random(105, 1024 - enemy.width), Utils.Random(400, 600));
+            enemy.SetState(Fighter.State.WAITING);
+        }
+
+        try {
+            _listOfEnemies[0].Type = 1; // type 1 is right
+            _listOfEnemies[0].SetState(Fighter.State.WALKING);
+            enemyPosition[0] = 1;
+
+            _listOfEnemies[1].Type = 2; // type 2 is left
+            _listOfEnemies[1].SetState(Fighter.State.WALKING);
+            enemyPosition[1] = 1;
+        } catch {
+            // empty, dont kill us pls
         }
     }
 

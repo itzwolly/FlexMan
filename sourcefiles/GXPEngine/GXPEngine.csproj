@@ -69,6 +69,10 @@
     <Compile Include="HUD.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Level.cs" />
+    <Compile Include="Menu\LoseScreen.cs" />
+    <Compile Include="Menu\OpeningScreen.cs" />
+    <Compile Include="Menu\StartScreen.cs" />
+    <Compile Include="Menu\WinScreen.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="Pausable.cs" />
     <Compile Include="Player.cs" />

@@ -21,6 +21,10 @@ public class Background : Sprite
         game.AddChildAt(_backDrop, 0);
     }
 
+    void Update() {
+
+    }
+
     public void MoveBackDrop(bool moveToLeft, bool hasPickedUpEnemy) {
         if (moveToLeft) {
             if (hasPickedUpEnemy) {
